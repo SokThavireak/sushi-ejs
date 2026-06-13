@@ -161,4 +161,118 @@ router.post("/api/orders/request-refund/:id", checkAuthenticated, async (req, re
   } catch (err) { res.status(500).json({ error: "Server Error" }); }
 });
 
+// --- WEBSITE EJS RENDERING ROUTES ---
+
+// Website Home Page
+router.get("/", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM products");
+    res.render("website/main/index", {
+      title: "Murakami Sushi",
+      products: result.rows,
+    });
+  } catch (err) {
+    console.error("Error loading home page:", err);
+    res.render("website/main/index", {
+      title: "Murakami Sushi",
+      products: [],
+    });
+  }
+});
+
+// Menu Page
+router.get("/menu", async (req, res) => {
+  try {
+    const productsRes = await pool.query("SELECT * FROM products ORDER BY id ASC");
+    const categoriesRes = await pool.query("SELECT * FROM categories ORDER BY id ASC");
+    res.render("website/menu", {
+      title: "Our Menu - Murakami Sushi",
+      products: productsRes.rows,
+      categories: categoriesRes.rows,
+    });
+  } catch (err) {
+    console.error("Error loading menu:", err);
+    res.status(500).send("Error loading menu");
+  }
+});
+
+// About Page
+router.get("/about", (req, res) => {
+  res.render("website/about", { title: "About Us - Murakami Sushi" });
+});
+
+// Locations Page
+router.get("/location", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM locations ORDER BY id ASC");
+    res.render("website/location", {
+      title: "Our Locations - Murakami Sushi",
+      locations: result.rows,
+    });
+  } catch (err) {
+    console.error("Error loading locations:", err);
+    res.status(500).send("Error loading locations");
+  }
+});
+
+// Offers Page
+router.get("/offers", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM products ORDER BY id DESC");
+    const discountedProducts = result.rows.filter(
+      (p) => p.discount_type && p.discount_type !== "none" && p.discount_value > 0
+    );
+    res.render("website/offers", {
+      title: "Special Offers - Murakami Sushi",
+      products: discountedProducts,
+    });
+  } catch (err) {
+    console.error("Error loading offers:", err);
+    res.status(500).send("Error loading offers");
+  }
+});
+
+// Checkout Page
+router.get("/checkout", checkAuthenticated, async (req, res) => {
+  try {
+    const cartRes = await pool.query(
+      `SELECT c.id as cart_id, c.quantity, p.id as product_id, p.name, p.price, p.image_url 
+       FROM cart c 
+       JOIN products p ON c.product_id = p.id 
+       WHERE c.user_id = $1 
+       ORDER BY c.id ASC`,
+      [req.user.id]
+    );
+    const locRes = await pool.query("SELECT * FROM locations WHERE status = 'Open'");
+    res.render("website/checkout", {
+      title: "Checkout - Murakami Sushi",
+      cart: cartRes.rows,
+      locations: locRes.rows,
+    });
+  } catch (err) {
+    console.error("Error loading checkout page:", err);
+    res.status(500).send("Error loading checkout");
+  }
+});
+
+// Profile Page
+router.get("/profile", checkAuthenticated, (req, res) => {
+  res.render("website/profile", { title: "My Profile - Murakami Sushi" });
+});
+
+// Login / Register Page (website/auth)
+router.get("/login", (req, res) => {
+  if (req.isAuthenticated()) {
+    return res.redirect("/");
+  }
+  res.render("website/auth", { title: "Login / Register - Murakami Sushi" });
+});
+
+router.get("/register", (req, res) => {
+  if (req.isAuthenticated()) {
+    return res.redirect("/");
+  }
+  res.render("website/auth", { title: "Login / Register - Murakami Sushi" });
+});
+
 export default router;

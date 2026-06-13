@@ -23,6 +23,10 @@ import { processStaffCheckout } from "./controllers/orderController.js";
 env.config();
 
 const app = express();
+app.set("view engine", "ejs");
+app.use(expressLayouts);
+app.set("layout", "layouts");
+
 const port = process.env.PORT || 3000;
 const pgSession = connectPgSimple(session);
 const isProduction = process.env.NODE_ENV === "production";
