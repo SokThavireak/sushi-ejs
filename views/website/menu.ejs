@@ -140,7 +140,7 @@
 </div>
 
 <script>
-    const IS_LOGGED_IN = <%= (typeof user !== 'undefined' && user) ? 'true' : 'false' %>;
+    const IS_LOGGED_IN = '<%= (typeof user !== "undefined" && user) ? "true" : "false" %>' === 'true';
 
     function forceScrollToHash() {
         if (window.location.hash) {
