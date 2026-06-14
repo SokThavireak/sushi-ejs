@@ -3,6 +3,7 @@ import env from "dotenv";
 env.config();
 
 const isProduction = process.env.NODE_ENV === "production";
+const isRemoteHost = process.env.DB_HOST && process.env.DB_HOST !== "localhost" && process.env.DB_HOST !== "127.0.0.1";
 
 const connectionConfig = process.env.DATABASE_URL
   ? {
@@ -15,7 +16,7 @@ const connectionConfig = process.env.DATABASE_URL
       database: process.env.DB_DATABASE,
       password: process.env.DB_PASSWORD,
       port: process.env.DB_PORT,
-      ssl: isProduction ? { rejectUnauthorized: false } : false,
+      ssl: (isProduction || isRemoteHost) ? { rejectUnauthorized: false } : false,
     };
 
 const pool = new Pool(connectionConfig);
