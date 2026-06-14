@@ -508,14 +508,12 @@
           }
         `;
 
-        // The user requested orange colors: 
-        // color1: #ff5a00 (vibrant orange)
-        // color2: #f97316 (orange-500)
+        // Background animation colors: White and Orange
         const uniforms = {
             time: { value: 0 },
             intensity: { value: 1.0 },
-            color1: { value: new THREE.Color("#ff5a00") }, // Vibrant Orange
-            color2: { value: new THREE.Color("#ea580c") }  // Darker Orange
+            color1: { value: new THREE.Color("#ffffff") }, // Pure White
+            color2: { value: new THREE.Color("#f97316") }  // Vibrant Orange
         };
 
         const material = new THREE.ShaderMaterial({
