@@ -126,7 +126,11 @@
       { threshold: 0.1 } 
     );
 
-    document.querySelectorAll(".scroll-hidden").forEach((el) => observer.observe(el));
+    document.querySelectorAll(".scroll-hidden").forEach((el) => {
+      const delay = el.getAttribute("data-delay");
+      if (delay) el.style.transitionDelay = delay;
+      observer.observe(el);
+    });
   });
 
   // 3. SEARCH FUNCTION

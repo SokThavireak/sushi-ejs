@@ -4,7 +4,7 @@ import pool from "../config/db.js";
 import { checkAuthenticated, checkRole } from "../middleware/auth.js";
 import upload from "../config/cloudinary.js"; // Import upload from your config folder
 
-const app = express();
+const app = express.Router();
 const saltRounds = 10;
 
 app.get("/admin/dashboard", checkAuthenticated, checkRole(["manager", "admin", "store_manager"]), async (req, res) => {

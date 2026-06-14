@@ -4,10 +4,10 @@ import bcrypt from "bcrypt";
 import pool from "../config/db.js";
 import { checkAuthenticated } from "../middleware/auth.js";
 
-const app = express();
+const router = express.Router();
 const saltRounds = 10;
 
-app.get("/api/auth/status", (req, res) => {
+router.get("/api/auth/status", (req, res) => {
   if (req.isAuthenticated()) {
     res.json({ authenticated: true, user: req.user });
   } else {
@@ -15,7 +15,7 @@ app.get("/api/auth/status", (req, res) => {
   }
 });
 
-app.post("/login", (req, res, next) => {
+router.post("/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) return next(err);
     if (!user) return res.status(401).json({ error: "Invalid email or password" });
@@ -35,7 +35,7 @@ app.post("/login", (req, res, next) => {
   })(req, res, next);
 });
 
-app.post("/register", async (req, res) => {
+router.post("/register", async (req, res) => {
   const email = req.body.username;
   const password = req.body.password;
   try {
@@ -62,14 +62,14 @@ app.post("/register", async (req, res) => {
   }
 });
 
-app.post("/logout", (req, res) => {
+router.post("/logout", (req, res) => {
   req.logout((err) => {
     if (err) return res.status(500).json({ error: "Logout failed" });
     res.json({ message: "Logout successful" });
   });
 });
 
-app.get("/logout", (req, res) => {
+router.get("/logout", (req, res) => {
   req.logout((err) => {
     if (err) {
       console.error("Logout error:", err);
@@ -78,9 +78,9 @@ app.get("/logout", (req, res) => {
   });
 });
 
-app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+router.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
-app.get("/auth/google/secrets", passport.authenticate("google", { failureRedirect: "/login" }), (req, res) => {
+router.get("/auth/google/secrets", passport.authenticate("google", { failureRedirect: "/login" }), (req, res) => {
   const role = req.user.role;
   if (["admin", "manager", "store_manager"].includes(role)) {
     res.redirect("/admin/dashboard");
@@ -89,11 +89,11 @@ app.get("/auth/google/secrets", passport.authenticate("google", { failureRedirec
   }
 });
 
-app.get("/api/profile", checkAuthenticated, (req, res) => {
+router.get("/api/profile", checkAuthenticated, (req, res) => {
   res.json({ user: req.user });
 });
 
-app.put("/profile/update", checkAuthenticated, async (req, res) => {
+router.put("/profile/update", checkAuthenticated, async (req, res) => {
   const { email, password } = req.body;
   const userId = req.user.id;
   try {
@@ -112,7 +112,7 @@ app.put("/profile/update", checkAuthenticated, async (req, res) => {
   }
 });
 
-app.delete("/profile/delete", checkAuthenticated, async (req, res) => {
+router.delete("/profile/delete", checkAuthenticated, async (req, res) => {
   try {
     await pool.query("DELETE FROM users WHERE id = $1", [req.user.id]);
     req.logout((err) => {
@@ -124,4 +124,4 @@ app.delete("/profile/delete", checkAuthenticated, async (req, res) => {
   }
 });
 
-export default app;
+export default router;
