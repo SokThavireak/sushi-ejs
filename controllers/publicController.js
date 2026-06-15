@@ -351,4 +351,19 @@ router.post("/orders/request-refund/:id", checkAuthenticated, async (req, res) =
   }
 });
 
+// GET: Fetch payment details as JSON
+router.get("/api/payment/:id", checkAuthenticated, async (req, res) => {
+  try {
+    const orderRes = await pool.query("SELECT * FROM orders WHERE id = $1", [req.params.id]);
+    if (orderRes.rows.length === 0) return res.status(404).json({ error: "Order not found" });
+    const order = orderRes.rows[0];
+    res.json({
+      orderId: order.id,
+      amount: parseFloat(order.total_price).toFixed(2)
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 export default router;

@@ -1,0 +1,327 @@
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
+
+export const Navbar: React.FC = () => {
+  const { user, isAuthenticated, logout } = useAuth();
+  const { toggleCart, cartCount } = useCart();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [theme, setTheme] = useState<string>(localStorage.getItem("theme") || "light");
+  const [profileOpen, setProfileOpen] = useState<boolean>(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Sync theme class
+    const root = window.document.documentElement;
+    if (theme === "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  useEffect(() => {
+    // Handle click outside to close profile dropdown
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setProfileOpen(false);
+      }
+    };
+    window.addEventListener("click", handleOutsideClick);
+    return () => window.removeEventListener("click", handleOutsideClick);
+  }, []);
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    setProfileOpen(false);
+    navigate("/login");
+  };
+
+  const isStaff = user && ["manager", "admin", "store_manager", "staff", "cashier"].includes(user.role.trim().toLowerCase());
+  const isAdminOrManager = user && ["manager", "admin", "store_manager"].includes(user.role.trim().toLowerCase());
+
+  const currentPath = location.pathname;
+
+  return (
+    <nav className="fixed top-0 w-full z-50 transition-all duration-300 backdrop-blur-md bg-blue-100/40 dark:bg-blue-955/45 border-b border-blue-100/30 dark:border-blue-900/30 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 py-3 lg:px-8 lg:py-4">
+        <div className="flex justify-between items-center">
+          {/* Logo */}
+          <div className="text-2xl lg:text-3xl font-extrabold tracking-tight z-50">
+            <Link
+              to={isStaff ? "/staff/menu" : "/"}
+              className="text-gray-900 dark:text-orange-400"
+            >
+              Murakami<span className="text-orange-500">.</span>
+            </Link>
+          </div>
+
+          {/* Desktop Navigation */}
+          {(!user || user.role !== "staff") && (
+            <div className="hidden lg:flex items-center gap-1 p-1 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+              <Link
+                to="/"
+                className={`expandable-tab flex items-center rounded-xl px-4 py-2 text-sm font-medium transition-colors duration-300 ${
+                  currentPath === "/"
+                    ? "bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 font-bold"
+                    : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                }`}
+              >
+                <i className="fa-solid fa-house text-[18px]"></i>
+                <span className="ml-2">Home</span>
+              </Link>
+
+              <Link
+                to="/menu"
+                className={`expandable-tab flex items-center rounded-xl px-4 py-2 text-sm font-medium transition-colors duration-300 ${
+                  currentPath === "/menu"
+                    ? "bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 font-bold"
+                    : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                }`}
+              >
+                <i className="fa-solid fa-utensils text-[18px]"></i>
+                <span className="ml-2">Menu</span>
+              </Link>
+
+              <div className="mx-1 h-[24px] w-[1.5px] bg-gray-200 dark:bg-gray-700"></div>
+
+              <Link
+                to="/about"
+                className={`expandable-tab flex items-center rounded-xl px-4 py-2 text-sm font-medium transition-colors duration-300 ${
+                  currentPath === "/about"
+                    ? "bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 font-bold"
+                    : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                }`}
+              >
+                <i className="fa-solid fa-circle-info text-[18px]"></i>
+                <span className="ml-2">About</span>
+              </Link>
+
+              <Link
+                to="/offers"
+                className={`expandable-tab flex items-center rounded-xl px-4 py-2 text-sm font-medium transition-colors duration-300 ${
+                  currentPath === "/offers"
+                    ? "bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 font-bold"
+                    : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                }`}
+              >
+                <i className="fa-solid fa-tag text-[18px]"></i>
+                <span className="ml-2">Offers</span>
+              </Link>
+
+              <Link
+                to="/location"
+                className={`expandable-tab flex items-center rounded-xl px-4 py-2 text-sm font-medium transition-colors duration-300 ${
+                  currentPath === "/location"
+                    ? "bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 font-bold"
+                    : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                }`}
+              >
+                <i className="fa-solid fa-map-location-dot text-[18px]"></i>
+                <span className="ml-2">Locations</span>
+              </Link>
+            </div>
+          )}
+
+          {/* Right Side Buttons */}
+          <div className="flex items-center gap-3 lg:gap-6">
+            {isAuthenticated && isAdminOrManager && (
+              <Link
+                to="/admin/dashboard"
+                className="hidden lg:flex items-center gap-2 text-sm font-bold text-gray-800 dark:text-orange-400 hover:text-orange-500 dark:hover:text-orange-300"
+              >
+                <i className="fa-solid fa-chart-pie"></i> Dashboard
+              </Link>
+            )}
+
+            {isAuthenticated && isStaff && (
+              <>
+                <Link
+                  to="/staff/menu"
+                  className="hidden lg:flex items-center gap-2 text-sm font-bold text-gray-800 dark:text-orange-400 hover:text-orange-500 dark:hover:text-orange-300"
+                >
+                  <i className="fa-solid fa-utensils"></i> POS Menu
+                </Link>
+                <Link
+                  to="/admin/orders"
+                  className="hidden lg:flex items-center gap-2 text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 bg-emerald-50 dark:bg-emerald-900/30 px-3 py-1.5 rounded-lg transition-colors"
+                >
+                  <i className="fa-solid fa-cash-register"></i> POS Checkout
+                </Link>
+              </>
+            )}
+
+            {/* Profile Dropdown */}
+            {isAuthenticated && user ? (
+              <div className="relative" ref={profileRef}>
+                <button
+                  onClick={() => setProfileOpen(!profileOpen)}
+                  className="flex items-center justify-center w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-orange-100 dark:hover:bg-orange-900/30 text-gray-700 dark:text-orange-400 transition-all focus:outline-none"
+                >
+                  <i className="fa-solid fa-user"></i>
+                </button>
+
+                {profileOpen && (
+                  <div className="absolute right-0 mt-3 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50 animate-fade-in-down">
+                    <div className="px-4 py-3 bg-gray-50 dark:bg-gray-700 border-b border-gray-100 dark:border-gray-600">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Signed in as</p>
+                      <p className="text-sm font-bold text-gray-800 dark:text-orange-400 truncate">
+                        {user.email.split("@")[0]}
+                      </p>
+                    </div>
+                    {user.role === "user" && (
+                      <Link
+                        to="/profile"
+                        onClick={() => setProfileOpen(false)}
+                        className="block px-4 py-3 text-sm text-gray-700 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-gray-700 transition-colors"
+                      >
+                        <i className="fa-solid fa-gear mr-2 text-gray-400"></i> Manage Account
+                      </Link>
+                    )}
+                    <Link
+                      to="/orders"
+                      onClick={() => setProfileOpen(false)}
+                      className="block px-4 py-3 text-sm text-gray-700 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <i className="fa-solid fa-receipt mr-2 text-gray-400"></i> Orders
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left block px-4 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors border-t border-gray-100 dark:border-gray-700"
+                    >
+                      <i className="fa-solid fa-right-from-bracket mr-2"></i> Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                className="desktop-link text-sm font-bold text-gray-800 dark:text-orange-400 hover:text-orange-500 dark:hover:text-orange-300 transition-colors"
+              >
+                Login
+              </Link>
+            )}
+
+            {/* Dark Mode Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="w-10 h-10 flex items-center justify-center text-gray-700 dark:text-orange-400 hover:text-orange-500 dark:hover:text-orange-300 transition focus:outline-none"
+            >
+              <i
+                className={`fa-solid ${theme === "dark" ? "fa-sun" : "fa-moon"} text-xl`}
+              ></i>
+            </button>
+
+            {/* Shopping Cart Drawer Trigger */}
+            <button
+              onClick={toggleCart}
+              className="relative w-10 h-10 flex items-center justify-center text-gray-700 dark:text-orange-400 hover:text-orange-500 dark:hover:text-orange-300 transition"
+            >
+              <i className="fa-solid fa-shopping-bag text-xl"></i>
+              {cartCount > 0 && (
+                <span className="absolute top-0 right-0 bg-orange-600 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full shadow-sm">
+                  {cartCount}
+                </span>
+              )}
+            </button>
+
+            {/* Mobile menu toggle */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden w-10 h-10 flex items-center justify-center text-gray-800 dark:text-orange-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors focus:outline-none"
+            >
+              <i
+                className={`fa-solid ${mobileMenuOpen ? "fa-xmark" : "fa-bars"} text-xl`}
+              ></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu Dropdown */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden bg-slate-50 dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 absolute w-full left-0 shadow-lg">
+          <div className="flex flex-col p-4 space-y-2">
+            {(!user || user.role !== "staff") && (
+              <>
+                <Link
+                  to="/"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="mobile-link flex items-center p-3 rounded-lg font-semibold dark:text-orange-300 text-gray-700 hover:bg-orange-50 dark:hover:bg-orange-950"
+                >
+                  <i className="fa-solid fa-house w-6 text-center text-gray-400"></i> Home
+                </Link>
+                <Link
+                  to="/menu"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="mobile-link flex items-center p-3 rounded-lg font-semibold dark:text-orange-300 text-gray-700 hover:bg-orange-50 dark:hover:bg-orange-950"
+                >
+                  <i className="fa-solid fa-utensils w-6 text-center text-gray-400"></i> Menu
+                </Link>
+                <Link
+                  to="/about"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="mobile-link flex items-center p-3 rounded-lg font-semibold dark:text-orange-300 text-gray-700 hover:bg-orange-50 dark:hover:bg-orange-950"
+                >
+                  <i className="fa-solid fa-circle-info w-6 text-center text-gray-400"></i> About
+                </Link>
+                <Link
+                  to="/offers"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="mobile-link flex items-center p-3 rounded-lg font-semibold dark:text-orange-300 text-gray-700 hover:bg-orange-50 dark:hover:bg-orange-950"
+                >
+                  <i className="fa-solid fa-tag w-6 text-center text-gray-400"></i> Offers
+                </Link>
+                <Link
+                  to="/location"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="mobile-link flex items-center p-3 rounded-lg font-semibold dark:text-orange-300 text-gray-700 hover:bg-orange-50 dark:hover:bg-orange-950"
+                >
+                  <i className="fa-solid fa-map-location-dot w-6 text-center text-gray-400"></i>{" "}
+                  Locations
+                </Link>
+                {!isAuthenticated && (
+                  <>
+                    <div className="border-t border-gray-100 dark:border-gray-800 my-2 pt-2"></div>
+                    <Link
+                      to="/login"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="mobile-link flex items-center p-3 rounded-lg font-semibold dark:text-orange-300 text-gray-700 hover:bg-orange-50 dark:hover:bg-orange-950"
+                    >
+                      <i className="fa-solid fa-right-to-bracket w-6 text-center text-gray-400"></i>{" "}
+                      Login
+                    </Link>
+                  </>
+                )}
+              </>
+            )}
+
+            {isAuthenticated && isAdminOrManager && (
+              <>
+                <div className="border-t border-gray-100 dark:border-gray-800 my-2 pt-2"></div>
+                <Link
+                  to="/admin/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="mobile-link flex items-center p-3 rounded-lg font-semibold dark:text-orange-300 text-gray-700 hover:bg-orange-50 dark:hover:bg-orange-950"
+                >
+                  <i className="fa-solid fa-chart-pie w-6 text-center text-gray-400"></i> Dashboard
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+};

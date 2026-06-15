@@ -179,4 +179,102 @@ router.get("/manager/daily-stock/history/:id", checkAuthenticated, async (req, r
   } catch (err) { res.status(500).send("Server Error"); }
 });
 
+// JSON API counterpart routes for React SPA
+router.get("/api/manager/daily-stock", checkAuthenticated, checkRole(["store_manager", "admin", "manager"]), async (req, res) => {
+  try {
+    let locId = req.user.assigned_location_id ? String(req.user.assigned_location_id) : null;
+    if (["admin", "manager"].includes(req.user.role)) {
+      if (req.query.location) locId = String(req.query.location);
+      else if (!locId) {
+        const firstLoc = await pool.query("SELECT id FROM locations ORDER BY id ASC LIMIT 1");
+        if (firstLoc.rows.length > 0) locId = String(firstLoc.rows[0].id);
+      }
+    }
+    if (!locId) return res.status(400).json({ error: "No valid location found." });
+    
+    const locRes = await pool.query("SELECT name FROM locations WHERE id = $1", [locId]);
+    if (locRes.rows.length === 0) return res.status(404).json({ error: "Location ID not found." });
+    
+    const allLocs = await pool.query("SELECT * FROM locations ORDER BY id ASC");
+    const dateQuery = req.query.date || new Date().toISOString().split("T")[0];
+    const checkRes = await pool.query("SELECT * FROM daily_inventory_logs WHERE location_name = $1 AND report_date = $2", [locRes.rows[0].name, dateQuery]);
+    const masterRes = await pool.query("SELECT * FROM stocks ORDER BY category, name ASC");
+
+    res.json({
+      locationName: locRes.rows[0].name,
+      locations: allLocs.rows,
+      masterItems: masterRes.rows,
+      alreadySubmitted: checkRes.rows.length > 0,
+      currentLocationId: locId,
+      query: { date: dateQuery, location: locId },
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get("/api/manager/daily-stock/edit/:id", checkAuthenticated, async (req, res) => {
+  try {
+    const logRes = await pool.query("SELECT * FROM daily_inventory_logs WHERE id = $1", [req.params.id]);
+    if (logRes.rows.length === 0) return res.status(404).json({ error: "Stock Log not found" });
+    const log = logRes.rows[0];
+    const diffMinutes = (new Date() - new Date(log.created_at)) / 1000 / 60;
+    
+    const isAdmin = req.user.role === "admin" || req.user.role === "manager";
+    if (!isAdmin && !log.is_unlocked && (req.user.id != log.user_id || diffMinutes > 5)) {
+      return res.status(403).json({ error: "Edit time limit expired. Ask a Manager to unlock this report." });
+    }
+
+    const itemsRes = await pool.query("SELECT * FROM daily_inventory_items WHERE log_id = $1 ORDER BY category, item_name", [req.params.id]);
+    res.json({ log, items: itemsRes.rows });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+router.get("/api/manager/stock-history", checkAuthenticated, checkRole(["store_manager", "admin", "manager"]), async (req, res) => {
+  try {
+    let queryParams = [];
+    let queryConditions = [];
+    
+    if (["admin", "manager"].includes(req.user.role) && req.query.location) {
+      queryConditions.push(`l.id = $${queryParams.length + 1}`);
+      queryParams.push(String(req.query.location));
+    } else if (req.user.assigned_location_id) {
+      const userLoc = await pool.query("SELECT name FROM locations WHERE id = $1", [req.user.assigned_location_id]);
+      if (userLoc.rows.length > 0) {
+        queryConditions.push(`dil.location_name = $${queryParams.length + 1}`);
+        queryParams.push(userLoc.rows[0].name);
+      }
+    }
+
+    if (req.query.date) {
+      queryConditions.push(`dil.report_date = $${queryParams.length + 1}`);
+      queryParams.push(req.query.date);
+    }
+
+    let sql = `SELECT dil.*, u.email FROM daily_inventory_logs dil LEFT JOIN users u ON dil.user_id = u.id::varchar LEFT JOIN locations l ON dil.location_name = l.name `;
+    if (queryConditions.length > 0) sql += " WHERE " + queryConditions.join(" AND ");
+    sql += " ORDER BY dil.report_date DESC, dil.created_at DESC";
+
+    const logsRes = await pool.query(sql, queryParams);
+    const locRes = await pool.query("SELECT * FROM locations ORDER BY id ASC");
+    res.json({ logs: logsRes.rows, locations: locRes.rows, query: req.query });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+router.get("/api/manager/daily-stock/view/:id", checkAuthenticated, checkRole(["manager", "admin", "store_manager"]), async (req, res) => {
+  try {
+    const logRes = await pool.query(`SELECT l.*, u.email FROM daily_inventory_logs l LEFT JOIN users u ON l.user_id = u.id::varchar WHERE l.id = $1`, [req.params.id]);
+    if (logRes.rows.length === 0) return res.status(404).json({ error: "Log not found" });
+    const log = logRes.rows[0];
+
+    if (req.user.role === "store_manager") {
+      const locRes = await pool.query("SELECT name FROM locations WHERE id = $1", [req.user.assigned_location_id]);
+      if (locRes.rows.length > 0 && log.location_name !== locRes.rows[0].name) return res.status(403).json({ error: "Access Denied" });
+    }
+
+    const itemsRes = await pool.query(`SELECT dii.*, s.image_url FROM daily_inventory_items dii LEFT JOIN stocks s ON dii.item_name = s.name WHERE dii.log_id = $1 ORDER BY dii.category, dii.item_name`, [req.params.id]);
+    res.json({ log, items: itemsRes.rows });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 export default router;

@@ -6,6 +6,8 @@ import session from "express-session";
 import env from "dotenv";
 import connectPgSimple from "connect-pg-simple";
 import methodOverride from "method-override";
+import path from "path";
+import { fileURLToPath } from "url";
 
 import pool from "./config/db.js";
 import upload from "./config/cloudinary.js";
@@ -21,6 +23,9 @@ import { renderPaymentPage } from "./controllers/paymentController.js";
 import { processStaffCheckout } from "./controllers/orderController.js";
 
 env.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.set("view engine", "ejs");
@@ -55,6 +60,7 @@ app.use(
 
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "client/dist")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride("_method"));
@@ -97,6 +103,14 @@ app.post("/payment/confirm/:id", checkAuthenticated, async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Error confirming payment" });
   }
+});
+
+// Fallback route for SPA page navigation
+app.get("/{*splat}", (req, res, next) => {
+  if (req.path.startsWith("/api") || req.path.startsWith("/auth") || req.path.includes(".")) {
+    return next();
+  }
+  res.sendFile(path.join(__dirname, "client/dist/index.html"));
 });
 
 // Register Routers
