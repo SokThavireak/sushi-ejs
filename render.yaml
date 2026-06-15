@@ -32,10 +32,11 @@ services:
           property: host
 
   # 2. React Vite Static Site Frontend
-  - type: static
+  - type: web
     name: sushi-frontend
+    runtime: static
     buildCommand: cd client && npm install && npm run build
-    publishDir: client/dist
+    staticPublishPath: client/dist
     envVars:
       - key: VITE_API_URL
         fromService:
