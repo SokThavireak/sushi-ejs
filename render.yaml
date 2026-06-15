@@ -36,7 +36,7 @@ services:
     name: sushi-frontend
     runtime: static
     buildCommand: cd client && npm install && npm run build
-    publishPath: client/dist
+    publishDir: client/dist
     envVars:
       - key: VITE_API_URL
         fromService:
