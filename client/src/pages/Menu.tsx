@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
@@ -28,6 +28,44 @@ export const Menu: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [activeCategory, setActiveCategory] = useState<string>("All");
+
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      setCanScrollLeft(scrollLeft > 2);
+      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 2);
+    }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(checkScroll, 100);
+    return () => clearTimeout(timer);
+  }, [categories]);
+
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (el) {
+      el.addEventListener("scroll", checkScroll);
+      window.addEventListener("resize", checkScroll);
+    }
+    return () => {
+      if (el) {
+        el.removeEventListener("scroll", checkScroll);
+      }
+      window.removeEventListener("resize", checkScroll);
+    };
+  }, []);
+
+  const scroll = (direction: "left" | "right") => {
+    if (scrollContainerRef.current) {
+      const offset = direction === "left" ? -250 : 250;
+      scrollContainerRef.current.scrollBy({ left: offset, behavior: "smooth" });
+    }
+  };
 
   const API_BASE = import.meta.env.VITE_API_URL || "";
 
@@ -85,20 +123,50 @@ export const Menu: React.FC = () => {
         </div>
 
         {/* Category Filters */}
-        <div className="flex flex-wrap justify-center gap-3">
-          {displayCategories.map((cat) => (
+        <div className="relative w-full max-w-5xl flex items-center px-8 lg:px-12">
+          {/* Left Arrow Button */}
+          {canScrollLeft && (
             <button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.name)}
-              className={`px-6 py-3 rounded-full font-bold text-base lg:text-lg transition-all shadow-md transform active:scale-95 ${
-                activeCategory === cat.name
-                  ? "bg-orange-500 text-white scale-105"
-                  : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-700 hover:text-orange-500"
-              }`}
+              onClick={() => scroll("left")}
+              className="absolute left-0 z-10 w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-orange-500 hover:text-white dark:hover:bg-orange-500 text-gray-700 dark:text-gray-200 transition-all duration-300 active:scale-90"
+              aria-label="Scroll left"
             >
-              {cat.name}
+              <i className="fa-solid fa-chevron-left text-xs sm:text-sm lg:text-base"></i>
             </button>
-          ))}
+          )}
+
+          {/* Categories Row */}
+          <div
+            ref={scrollContainerRef}
+            className="w-full overflow-x-auto py-2 no-scrollbar scroll-smooth"
+          >
+            <div className="flex flex-nowrap gap-2 sm:gap-3 justify-start xl:justify-center">
+              {displayCategories.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveCategory(cat.name)}
+                  className={`whitespace-nowrap px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 rounded-full font-bold text-xs sm:text-sm md:text-base lg:text-lg transition-all shadow-md transform active:scale-95 flex-shrink-0 ${
+                    activeCategory === cat.name
+                      ? "bg-orange-500 text-white scale-105"
+                      : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-700 hover:text-orange-500"
+                  }`}
+                >
+                  {cat.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Arrow Button */}
+          {canScrollRight && (
+            <button
+              onClick={() => scroll("right")}
+              className="absolute right-0 z-10 w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-orange-500 hover:text-white dark:hover:bg-orange-500 text-gray-700 dark:text-gray-200 transition-all duration-300 active:scale-90"
+              aria-label="Scroll right"
+            >
+              <i className="fa-solid fa-chevron-right text-xs sm:text-sm lg:text-base"></i>
+            </button>
+          )}
         </div>
       </div>
 

@@ -53,7 +53,7 @@ export const Navbar: React.FC = () => {
   const currentPath = location.pathname;
 
   return (
-    <nav className="fixed top-0 w-full z-50 transition-all duration-300 backdrop-blur-md bg-blue-100/40 dark:bg-blue-955/45 border-b border-blue-100/30 dark:border-blue-900/30 shadow-sm">
+    <nav className="fixed top-0 w-full z-50 transition-all duration-300 backdrop-blur-md bg-white/70 dark:bg-gray-950/70 border-b border-gray-200/30 dark:border-gray-800/30 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 py-3 lg:px-8 lg:py-4">
         <div className="flex justify-between items-center">
           {/* Logo */}

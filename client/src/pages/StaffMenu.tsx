@@ -115,20 +115,22 @@ export const StaffMenu: React.FC = () => {
         </div>
 
         {/* Category filters */}
-        <div className="flex flex-wrap justify-center gap-2">
-          {displayCategories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.name)}
-              className={`px-5 py-2 rounded-full font-bold text-sm transition-all shadow-sm ${
-                activeCategory === cat.name
-                  ? "bg-indigo-600 text-white scale-105"
-                  : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
-              }`}
-            >
-              {cat.name}
-            </button>
-          ))}
+        <div className="w-full overflow-x-auto pb-4 no-scrollbar flex justify-start 2xl:justify-center">
+          <div className="flex flex-nowrap gap-2 px-4">
+            {displayCategories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setActiveCategory(cat.name)}
+                className={`whitespace-nowrap px-5 py-2 rounded-full font-bold text-sm transition-all shadow-sm flex-shrink-0 ${
+                  activeCategory === cat.name
+                    ? "bg-indigo-600 text-white scale-105"
+                    : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+                }`}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
