@@ -265,7 +265,7 @@ export default function AdminUsers() {
               <div className="flex justify-center gap-2 mt-4">
                 <Link
                   to={`/admin/users/edit/${u.id}`}
-                  className="px-4 py-2 bg-gray-55 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg text-xs font-bold hover:bg-gray-100 dark:hover:bg-gray-750 transition-colors border border-gray-200 dark:border-gray-700"
+                  className="px-4 py-2 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg text-xs font-bold hover:bg-gray-100 dark:hover:bg-gray-750 transition-colors border border-gray-200 dark:border-gray-700"
                 >
                   Edit
                 </Link>

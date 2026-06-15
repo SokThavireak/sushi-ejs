@@ -6,7 +6,7 @@ import { Footer } from "./Footer";
 
 export default function CustomerLayout() {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-55 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300">
       <Navbar />
       <CartDrawer />
       <main className="flex-1 w-full pt-16 lg:pt-20">
