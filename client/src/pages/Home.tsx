@@ -103,7 +103,10 @@ export default function Home() {
   useEffect(() => {
     const apiBaseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
     axios.get(`${apiBaseUrl}/api/products?limit=6`)
-      .then(res => setFeatured(res.data)).catch(console.error);
+      .then(res => {
+        const products = res.data.products || res.data || [];
+        setFeatured(Array.isArray(products) ? products : []);
+      }).catch(console.error);
   }, []);
 
   const sectionHeading = (badge: string, badgeIcon: string, title: string, highlight: string, desc: string) => (
