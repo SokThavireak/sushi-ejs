@@ -55,7 +55,13 @@ export default function HorizonHeroSection() {
           if (!isAnimatingRef.current) {
             currentSectionRef.current = Math.round(self.progress * 3);
             // Sync video currentTime linearly if user drags the scrollbar manually
-            video.currentTime = 1 + self.progress * 9;
+            try {
+              if (video && video.readyState >= 1) {
+                video.currentTime = 1 + self.progress * 9;
+              }
+            } catch (e) {
+              console.warn("Failed to update video currentTime:", e);
+            }
           }
         }
       }
@@ -105,11 +111,19 @@ export default function HorizonHeroSection() {
       // Animate the video currentTime at normal playback speed (duration matches video delta)
       const targetTime = 1 + index * 3;
       const duration = Math.abs(targetTime - video.currentTime);
-      videoTween = gsap.to(video, {
-        currentTime: targetTime,
-        duration: duration,
-        ease: "none"
-      });
+      try {
+        if (video && video.readyState >= 1) {
+          videoTween = gsap.to(video, {
+            currentTime: targetTime,
+            duration: duration,
+            ease: "none"
+          });
+        } else if (video) {
+          video.currentTime = targetTime;
+        }
+      } catch (e) {
+        console.warn("Failed to tween video currentTime:", e);
+      }
     };
 
     const handleWheel = (e: WheelEvent) => {
