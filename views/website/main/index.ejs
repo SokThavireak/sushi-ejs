@@ -45,72 +45,7 @@
 <script>
   // 1. GSAP ANIMATIONS
   gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
-  let mm = gsap.matchMedia();
-
-  mm.add("(min-width: 1024px)", () => {
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: "#feature-scroll-section",
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 1,
-        snap: {
-          snapTo: 1 / 4,
-          duration: { min: 0.3, max: 0.6 },
-          delay: 0,
-          ease: "power1.inOut",
-        },
-      },
-    });
-
-    const cards = document.querySelectorAll(".feature-card");
-
-    if(cards.length > 0) {
-        tl.to(cards[1], { y: 0, duration: 1, ease: "none" })
-          .to(cards[2], { y: 0, duration: 1, ease: "none" })
-          .to(cards[3], { y: 0, duration: 1, ease: "none" });
-
-        tl.add("zoomStart");
-        const gridWidth = 280;
-        const gridHeight = 400;
-        const gap = 24;
-        const commonGridProps = {
-          width: `${gridWidth}px`,
-          height: `${gridHeight}px`,
-          borderRadius: "1rem",
-          top: "50%",
-          y: "-50%",
-          ease: "power2.inOut",
-          duration: 1,
-        };
-        
-        tl.to(".feature-card h3", { fontSize: "1.25rem", duration: 1 }, "zoomStart")
-          .to(".icon-container", { width: "3.5rem", height: "3.5rem", marginBottom: "1rem", duration: 1 }, "zoomStart")
-          .to(".icon-container svg", { width: "2rem", height: "2rem", duration: 1 }, "zoomStart");
-          
-        tl.to(cards[0], { ...commonGridProps, left: `calc(50% - ${gridWidth * 2 + gap * 1.5}px)` }, "zoomStart")
-          .to(cards[1], { ...commonGridProps, left: `calc(50% - ${gridWidth * 1 + gap * 0.5}px)` }, "zoomStart")
-          .to(cards[2], { ...commonGridProps, left: `calc(50% + ${gap * 0.5}px)` }, "zoomStart")
-          .to(cards[3], { ...commonGridProps, left: `calc(50% + ${gridWidth * 1 + gap * 1.5}px)` }, "zoomStart");
-    }
-  });
-
-  mm.add("(max-width: 1023px)", () => {
-    gsap.set(".feature-card", {
-      position: "relative",
-      transform: "none",
-      height: "400px",
-      width: "100%",
-      marginBottom: "1rem",
-      borderRadius: "1rem",
-    });
-    gsap.set("#feature-scroll-section > div", { height: "auto" });
-    gsap.set("#feature-scroll-section .sticky", {
-      position: "relative",
-      height: "auto",
-      padding: "1rem",
-    });
-  });
+  // Note: Old feature-scroll-section GSAP animation is replaced by the interactive card stack in header.ejs
 
   // 2. SCROLL REVEAL OBSERVER
   document.addEventListener("DOMContentLoaded", function () {

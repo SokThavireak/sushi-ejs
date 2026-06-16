@@ -1,203 +1,207 @@
-<section id="feature-scroll-section" class="relative bg-white dark:bg-gray-900 pt-24 lg:pt-0">
-  
-  <div class="h-[100vh] lg:h-[500vh]">
-    <div class="sticky top-0 h-screen w-full overflow-hidden block">
+<section id="hero-card-section" class="relative bg-white dark:bg-gray-900 pt-28 pb-16 lg:py-24 transition-colors duration-300">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center">
+    
+    <!-- Hero Title & Subtitle -->
+    <div class="mb-12 max-w-3xl">
+      <span class="inline-block px-4 py-1.5 bg-orange-500 text-white text-xs md:text-sm font-bold uppercase tracking-widest rounded-full mb-4 shadow-sm animate-pulse">
+        Chef's Highlight
+      </span>
+      <h1 class="text-4xl md:text-6xl font-black text-gray-900 dark:text-white uppercase tracking-tight mb-4 drop-shadow-sm">
+        Discover Murakami<span class="text-orange-500">.</span>
+      </h1>
+      <p class="text-gray-500 dark:text-gray-400 text-base md:text-lg max-w-xl mx-auto font-light">
+        Witness the precision, dedication, and culinary artistry behind our signature sushi and ramen.
+      </p>
+    </div>
+
+    <!-- Stack Container -->
+    <div class="relative h-[380px] w-full max-w-[644px] flex items-center justify-center overflow-hidden">
       
       <!-- Card 1: Premium Nigiri -->
-      <div
-        class="feature-card absolute inset-0 w-full h-full z-10 bg-gray-900 overflow-hidden flex items-center justify-center"
-      >
-        <video
-          class="absolute inset-0 w-full h-full object-cover opacity-50"
-          autoplay
-          loop
-          muted
-          playsinline
-        >
-          <source
-            src="/videos/always-fresh.mp4"
-            type="video/mp4"
-          />
-        </video>
-
-        <div class="relative z-10 flex flex-col items-center justify-center text-white text-center p-4 max-w-5xl">
-          <span class="inline-block px-4 py-1.5 bg-orange-500 text-white text-xs md:text-sm font-bold uppercase tracking-widest rounded-full mb-6">
-            Chef's Recommendation
-          </span>
-          <h3 class="text-4xl md:text-8xl font-black text-white uppercase italic tracking-tighter mb-4 drop-shadow-2xl">
-            Premium Nigiri
-          </h3>
-          <p class="text-gray-200 text-sm md:text-xl font-medium max-w-2xl mx-auto mb-8 drop-shadow-md">
-            Hand-pressed sushi rice topped with the finest cuts of bluefin tuna and fresh Atlantic salmon.
-          </p>
-
-          <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 md:p-6 max-w-xl mx-auto mb-8 transform -rotate-1 shadow-2xl hidden md:block">
-            <div class="flex justify-center gap-1 mb-2">
-              <% for(let i=0; i<5; i++) { %>
-                <i class="fa-solid fa-star text-yellow-400 text-xs"></i>
-              <% } %>
-            </div>
-            <p class="text-white text-sm md:text-base italic font-medium leading-relaxed mb-2">
-              "The best sushi I've ever had outside of Tokyo. Absolutely melt-in-your-mouth!"
-            </p>
-            <div class="text-orange-400 font-bold uppercase tracking-widest text-[10px]">
-              — Elena S.
-            </div>
+      <div id="card-1" data-index="0" class="card-item absolute flex h-[280px] w-[320px] sm:w-[512px] flex-col overflow-hidden rounded-t-2xl border-x border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-1.5 shadow-xl transition-all duration-500 ease-out will-change-transform">
+        <div class="flex h-full w-full flex-col gap-4">
+          <div class="flex h-[200px] w-full items-center justify-center overflow-hidden rounded-xl outline outline-black/10 dark:outline-white/10">
+            <img src="https://images.unsplash.com/photo-1583623025817-d180a2221d0a?w=800&q=80" alt="Premium Nigiri" class="h-full w-full select-none object-cover pointer-events-none" />
           </div>
-
-          <a href="/menu" class="group flex items-center gap-2 bg-white text-black hover:bg-orange-500 hover:text-white px-6 py-3 md:px-10 md:py-4 rounded-full text-sm md:text-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-2xl">
-            View Recommendations
-            <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
-          </a>
+          <div class="flex w-full items-center justify-between gap-2 px-3 pb-6">
+            <div class="flex min-w-0 flex-1 flex-col text-left">
+              <span class="truncate font-bold text-gray-900 dark:text-white text-base">Premium Nigiri</span>
+              <span class="text-gray-500 dark:text-gray-400 text-xs truncate">Chef's selection of fresh sliced fish over hand-pressed sushi rice.</span>
+            </div>
+            <a href="/menu" class="flex h-10 shrink-0 cursor-pointer select-none items-center gap-0.5 rounded-full bg-orange-500 hover:bg-orange-600 text-white pl-4 pr-3 text-sm font-medium transition-colors">
+              Order
+              <i class="fa-solid fa-chevron-right text-[10px] ml-1"></i>
+            </a>
+          </div>
         </div>
       </div>
 
       <!-- Card 2: Dragon Rolls -->
-      <div
-        class="feature-card absolute inset-0 w-full h-full z-20 bg-gray-900 overflow-hidden flex items-center justify-center translate-y-full"
-      >
-        <video
-          class="absolute inset-0 w-full h-full object-cover opacity-50"
-          autoplay
-          loop
-          muted
-          playsinline
-        >
-          <source
-            src="/videos/fast-delivery.mp4"
-            type="video/mp4"
-          />
-        </video>
-
-        <div class="relative z-10 flex flex-col items-center justify-center text-white text-center p-4 max-w-5xl">
-          <span class="inline-block px-4 py-1.5 bg-orange-500 text-white text-xs md:text-sm font-bold uppercase tracking-widest rounded-full mb-6">
-            Top Rated
-          </span>
-          <h3 class="text-4xl md:text-8xl font-black text-white uppercase italic tracking-tighter mb-4 drop-shadow-2xl">
-            Dragon Rolls
-          </h3>
-          <p class="text-gray-200 text-sm md:text-xl font-medium max-w-2xl mx-auto mb-8 drop-shadow-md">
-            A fan favorite. Crispy tempura shrimp wrapped in velvety avocado with our signature eel sauce.
-          </p>
-
-          <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 md:p-6 max-w-xl mx-auto mb-8 transform rotate-1 shadow-2xl hidden md:block">
-            <div class="flex justify-center gap-1 mb-2">
-              <% for(let i=0; i<5; i++) { %>
-                <i class="fa-solid fa-star text-yellow-400 text-xs"></i>
-              <% } %>
-            </div>
-            <p class="text-white text-sm md:text-base italic font-medium leading-relaxed mb-2">
-              "Always arrives piping hot and beautifully presented. My go-to Friday night treat!"
-            </p>
-            <div class="text-orange-400 font-bold uppercase tracking-widest text-[10px]">
-              — Marcus J.
-            </div>
+      <div id="card-2" data-index="1" class="card-item absolute flex h-[280px] w-[320px] sm:w-[512px] flex-col overflow-hidden rounded-t-2xl border-x border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-1.5 shadow-xl transition-all duration-500 ease-out will-change-transform">
+        <div class="flex h-full w-full flex-col gap-4">
+          <div class="flex h-[200px] w-full items-center justify-center overflow-hidden rounded-xl outline outline-black/10 dark:outline-white/10">
+            <img src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&q=80" alt="Dragon Rolls" class="h-full w-full select-none object-cover pointer-events-none" />
           </div>
-
-          <a href="/menu" class="group flex items-center gap-2 bg-white text-black hover:bg-orange-500 hover:text-white px-6 py-3 md:px-10 md:py-4 rounded-full text-sm md:text-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-2xl">
-            View Recommendations
-            <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
-          </a>
+          <div class="flex w-full items-center justify-between gap-2 px-3 pb-6">
+            <div class="flex min-w-0 flex-1 flex-col text-left">
+              <span class="truncate font-bold text-gray-900 dark:text-white text-base">Dragon Rolls</span>
+              <span class="text-gray-500 dark:text-gray-400 text-xs truncate">Tempura shrimp, eel, and cucumber topped with avocado and sweet glaze.</span>
+            </div>
+            <a href="/menu" class="flex h-10 shrink-0 cursor-pointer select-none items-center gap-0.5 rounded-full bg-orange-500 hover:bg-orange-600 text-white pl-4 pr-3 text-sm font-medium transition-colors">
+              Order
+              <i class="fa-solid fa-chevron-right text-[10px] ml-1"></i>
+            </a>
+          </div>
         </div>
       </div>
 
       <!-- Card 3: Shio Ramen -->
-      <div
-        class="feature-card absolute inset-0 w-full h-full z-30 bg-gray-900 overflow-hidden flex items-center justify-center translate-y-full"
-      >
-        <video
-          class="absolute inset-0 w-full h-full object-cover opacity-50"
-          autoplay
-          loop
-          muted
-          playsinline
-        >
-          <source
-            src="/videos/secure-payment.mp4"
-            type="video/mp4"
-          />
-        </video>
-
-        <div class="relative z-10 flex flex-col items-center justify-center text-white text-center p-4 max-w-5xl">
-          <span class="inline-block px-4 py-1.5 bg-orange-500 text-white text-xs md:text-sm font-bold uppercase tracking-widest rounded-full mb-6">
-            Authentic Taste
-          </span>
-          <h3 class="text-4xl md:text-8xl font-black text-white uppercase italic tracking-tighter mb-4 drop-shadow-2xl">
-            Shio Ramen
-          </h3>
-          <p class="text-gray-200 text-sm md:text-xl font-medium max-w-2xl mx-auto mb-8 drop-shadow-md">
-            Light, clear broth seasoned with salt, served with handmade noodles and tender chashu pork.
-          </p>
-
-          <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 md:p-6 max-w-xl mx-auto mb-8 transform -rotate-1 shadow-2xl hidden md:block">
-            <div class="flex justify-center gap-1 mb-2">
-              <% for(let i=0; i<5; i++) { %>
-                <i class="fa-solid fa-star text-yellow-400 text-xs"></i>
-              <% } %>
-            </div>
-            <p class="text-white text-sm md:text-base italic font-medium leading-relaxed mb-2">
-              "The broth is so deep and flavorful. It reminds me of the hidden ramen shops in Osaka."
-            </p>
-            <div class="text-orange-400 font-bold uppercase tracking-widest text-[10px]">
-              — Kenji T.
-            </div>
+      <div id="card-3" data-index="2" class="card-item absolute flex h-[280px] w-[320px] sm:w-[512px] flex-col overflow-hidden rounded-t-2xl border-x border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-1.5 shadow-xl transition-all duration-500 ease-out will-change-transform">
+        <div class="flex h-full w-full flex-col gap-4">
+          <div class="flex h-[200px] w-full items-center justify-center overflow-hidden rounded-xl outline outline-black/10 dark:outline-white/10">
+            <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800&q=80" alt="Shio Ramen" class="h-full w-full select-none object-cover pointer-events-none" />
           </div>
-
-          <a href="/menu" class="group flex items-center gap-2 bg-white text-black hover:bg-orange-500 hover:text-white px-6 py-3 md:px-10 md:py-4 rounded-full text-sm md:text-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-2xl">
-            View Recommendations
-            <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
-          </a>
+          <div class="flex w-full items-center justify-between gap-2 px-3 pb-6">
+            <div class="flex min-w-0 flex-1 flex-col text-left">
+              <span class="truncate font-bold text-gray-900 dark:text-white text-base">Shio Ramen</span>
+              <span class="text-gray-500 dark:text-gray-400 text-xs truncate">Traditional light sea salt broth served with hand-pulled noodles and pork.</span>
+            </div>
+            <a href="/menu" class="flex h-10 shrink-0 cursor-pointer select-none items-center gap-0.5 rounded-full bg-orange-500 hover:bg-orange-600 text-white pl-4 pr-3 text-sm font-medium transition-colors">
+              Order
+              <i class="fa-solid fa-chevron-right text-[10px] ml-1"></i>
+            </a>
+          </div>
         </div>
       </div>
 
       <!-- Card 4: Spicy Maki -->
-      <div
-        class="feature-card absolute inset-0 w-full h-full z-40 bg-gray-900 overflow-hidden flex items-center justify-center translate-y-full"
-      >
-        <video
-          class="absolute inset-0 w-full h-full object-cover opacity-50"
-          autoplay
-          loop
-          muted
-          playsinline
-        >
-          <source
-            src="/videos/support-center.mp4"
-            type="video/mp4"
-          />
-        </video>
-
-        <div class="relative z-10 flex flex-col items-center justify-center text-white text-center p-4 max-w-5xl">
-          <span class="inline-block px-4 py-1.5 bg-orange-500 text-white text-xs md:text-sm font-bold uppercase tracking-widest rounded-full mb-6">
-            Customer Favorite
-          </span>
-          <h3 class="text-4xl md:text-8xl font-black text-white uppercase italic tracking-tighter mb-4 drop-shadow-2xl">
-            Spicy Maki
-          </h3>
-          <p class="text-gray-200 text-sm md:text-xl font-medium max-w-2xl mx-auto mb-8 drop-shadow-md">
-            Finely chopped spicy tuna or yellowtail with cucumber and spicy mayo for a perfect kick.
-          </p>
-
-          <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 md:p-6 max-w-xl mx-auto mb-8 transform rotate-1 shadow-2xl hidden md:block">
-            <div class="flex justify-center gap-1 mb-2">
-              <% for(let i=0; i<5; i++) { %>
-                <i class="fa-solid fa-star text-yellow-400 text-xs"></i>
-              <% } %>
-            </div>
-            <p class="text-white text-sm md:text-base italic font-medium leading-relaxed mb-2">
-              "Perfectly balanced heat. I order this every single time I visit. Highly recommended!"
-            </p>
-            <div class="text-orange-400 font-bold uppercase tracking-widest text-[10px]">
-              — Sarah L.
-            </div>
+      <div id="card-4" data-index="3" class="card-item absolute flex h-[280px] w-[320px] sm:w-[512px] flex-col overflow-hidden rounded-t-2xl border-x border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-1.5 shadow-xl transition-all duration-500 ease-out will-change-transform">
+        <div class="flex h-full w-full flex-col gap-4">
+          <div class="flex h-[200px] w-full items-center justify-center overflow-hidden rounded-xl outline outline-black/10 dark:outline-white/10">
+            <img src="https://images.unsplash.com/photo-1553621042-f6e147245754?w=800&q=80" alt="Spicy Maki" class="h-full w-full select-none object-cover pointer-events-none" />
           </div>
-
-          <a href="/menu" class="group flex items-center gap-2 bg-white text-black hover:bg-orange-500 hover:text-white px-6 py-3 md:px-10 md:py-4 rounded-full text-sm md:text-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-2xl">
-            View Recommendations
-            <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
-          </a>
+          <div class="flex w-full items-center justify-between gap-2 px-3 pb-6">
+            <div class="flex min-w-0 flex-1 flex-col text-left">
+              <span class="truncate font-bold text-gray-900 dark:text-white text-base">Spicy Maki</span>
+              <span class="text-gray-500 dark:text-gray-400 text-xs truncate">Finely chopped spicy tuna or yellowtail with cucumber and spicy mayo.</span>
+            </div>
+            <a href="/menu" class="flex h-10 shrink-0 cursor-pointer select-none items-center gap-0.5 rounded-full bg-orange-500 hover:bg-orange-600 text-white pl-4 pr-3 text-sm font-medium transition-colors">
+              Order
+              <i class="fa-solid fa-chevron-right text-[10px] ml-1"></i>
+            </a>
+          </div>
         </div>
       </div>
+
     </div>
+
+    <!-- Animate Button -->
+    <div class="relative z-20 flex w-full items-center justify-center border-t border-gray-100 dark:border-gray-800 py-6 mt-4">
+      <button
+        id="animate-btn"
+        class="flex h-10 cursor-pointer select-none items-center justify-center gap-2 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750 px-6 font-semibold text-gray-700 dark:text-gray-200 transition-all hover:scale-102 active:scale-95 shadow-sm"
+      >
+        <i class="fa-solid fa-rotate text-sm text-orange-500"></i>
+        <span>Animate Stack</span>
+      </button>
+    </div>
+
   </div>
 </section>
+
+<style>
+  .card-item {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0;
+    transform-origin: bottom center;
+  }
+</style>
+
+<script>
+  (function() {
+    const cardElements = [
+      document.getElementById('card-1'),
+      document.getElementById('card-2'),
+      document.getElementById('card-3'),
+      document.getElementById('card-4')
+    ];
+    
+    // Initial configuration: indices in the stack (0=top, 1=middle, 2=bottom, 3=hidden)
+    let cardIndices = [0, 1, 2, 3];
+    let isAnimating = false;
+
+    const positionStyles = [
+      { scale: 1, y: 12, opacity: 1, zIndex: 30, pointerEvents: 'auto' },
+      { scale: 0.95, y: -16, opacity: 0.9, zIndex: 20, pointerEvents: 'none' },
+      { scale: 0.9, y: -44, opacity: 0.8, zIndex: 10, pointerEvents: 'none' },
+      { scale: 0.8, y: -72, opacity: 0, zIndex: 0, pointerEvents: 'none' }
+    ];
+
+    function updateCardPositions() {
+      cardIndices.forEach((stackIndex, arrayIndex) => {
+        const el = cardElements[arrayIndex];
+        if (!el) return;
+
+        const style = positionStyles[stackIndex] || positionStyles[3];
+
+        el.style.zIndex = style.zIndex;
+        el.style.opacity = style.opacity;
+        el.style.pointerEvents = style.pointerEvents;
+        el.style.transform = `translateX(-50%) translateY(${style.y}px) scale(${style.scale})`;
+      });
+    }
+
+    // Run initially to position the cards
+    updateCardPositions();
+
+    const animateBtn = document.getElementById('animate-btn');
+    if (animateBtn) {
+      animateBtn.addEventListener('click', function() {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        // Find which card is currently at the top (stack index 0)
+        const topCardArrayIndex = cardIndices.indexOf(0);
+        const topEl = cardElements[topCardArrayIndex];
+
+        if (topEl) {
+          // 1. Move the top card out (drop down exit animation)
+          topEl.style.transform = 'translateX(-50%) translateY(340px) scale(1)';
+          topEl.style.opacity = '0';
+          topEl.style.zIndex = '40';
+        }
+
+        // 2. Animate other cards up one level
+        cardIndices.forEach((stackIndex, arrayIndex) => {
+          if (arrayIndex === topCardArrayIndex) return; // Top card is handled separately
+
+          let newStackIndex = stackIndex - 1;
+          cardIndices[arrayIndex] = newStackIndex;
+
+          const el = cardElements[arrayIndex];
+          if (!el) return;
+
+          const style = positionStyles[newStackIndex];
+          el.style.zIndex = style.zIndex;
+          el.style.opacity = style.opacity;
+          el.style.pointerEvents = style.pointerEvents;
+          el.style.transform = `translateX(-50%) translateY(${style.y}px) scale(${style.scale})`;
+        });
+
+        // 3. After exit finishes, place the former top card at the bottom of the stack
+        setTimeout(() => {
+          cardIndices[topCardArrayIndex] = 3; // Put at index 3 (hidden/bottom)
+          
+          const style = positionStyles[3];
+          topEl.style.zIndex = style.zIndex;
+          topEl.style.opacity = style.opacity;
+          topEl.style.pointerEvents = style.pointerEvents;
+          topEl.style.transform = `translateX(-50%) translateY(${style.y}px) scale(${style.scale})`;
+
+          isAnimating = false;
+        }, 500); // Duration matches CSS transition
+      });
+    }
+  })();
+</script>
