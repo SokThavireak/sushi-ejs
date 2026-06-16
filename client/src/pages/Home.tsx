@@ -156,9 +156,14 @@ export function Home() {
       {/* Categories Section */}
 
       {/* ─── 2. CATEGORIES SECTION (EJS our_category.ejs) ─── */}
-      <section id="our-menu" className="py-12 lg:py-16 bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-slate-50 dark:bg-gray-950/40 p-6 sm:p-10 lg:p-12 rounded-[2rem] border-b-4 border-orange-500 shadow-xl shadow-black/5 dark:shadow-black/20 border border-gray-150 dark:border-gray-800">
+      <section id="our-menu" className="py-12 bg-white dark:bg-gray-900 flex justify-center">
+        <div 
+          className="w-[92%] bg-gradient-to-br from-slate-50 to-orange-50/20 dark:from-gray-950 dark:to-gray-900 p-6 sm:p-10 lg:p-12 rounded-[24px] border border-gray-200/80 dark:border-gray-800/80 flex flex-col items-center transition-all duration-300"
+          style={{
+            boxShadow: "0 40px 100px -15px rgba(0, 0, 0, 0.12), 0 20px 40px -20px rgba(0, 0, 0, 0.08), 0 2px 10px rgba(0, 0, 0, 0.02)"
+          }}
+        >
+          <div className="w-full max-w-7xl">
             <div className="mb-8 lg:mb-10 text-center">
               <h2 className="text-2xl lg:text-3xl font-extrabold text-gray-900 dark:text-white scroll-hidden">
                 Our Categories
