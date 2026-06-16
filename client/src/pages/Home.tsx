@@ -156,7 +156,7 @@ export function Home() {
       {/* Categories Section */}
 
       {/* ─── 2. CATEGORIES SECTION (EJS our_category.ejs) ─── */}
-      <section id="our-menu" className="py-12 bg-[#f9fafb] dark:bg-[#0a0a0a] flex justify-center">
+      <section id="our-menu" className="py-12 flex justify-center">
         <div 
           className="w-[92%] bg-white dark:bg-gray-950 p-6 sm:p-10 lg:p-12 rounded-[24px] border border-gray-200/80 dark:border-gray-800/80 flex flex-col items-center transition-all duration-300"
           style={{
