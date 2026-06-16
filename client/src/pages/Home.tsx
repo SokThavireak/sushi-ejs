@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useCart } from "../context/CartContext";
 import Swal from "sweetalert2";
 import { CardSkeleton } from "../components/ui/Skeleton";
+import AnimatedCardStack from "../components/ui/animate-card-animation";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -148,6 +149,9 @@ export function Home() {
           }
         }
       `}</style>
+
+      {/* Hero Section */}
+      <AnimatedCardStack />
 
       {/* Categories Section */}
 
