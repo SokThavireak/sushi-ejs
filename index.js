@@ -19,7 +19,6 @@ import adminController from "./controllers/adminController.js";
 import managerController from "./controllers/managerController.js";
 
 import { checkAuthenticated, checkRole } from "./middleware/auth.js";
-import { renderPaymentPage } from "./controllers/paymentController.js";
 import { processStaffCheckout } from "./controllers/orderController.js";
 
 env.config();
@@ -28,9 +27,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-app.set("view engine", "ejs");
-app.use(expressLayouts);
-app.set("layout", "layout");
 
 const port = process.env.PORT || 3000;
 const pgSession = connectPgSimple(session);
@@ -60,6 +56,7 @@ app.use(
 
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "client/dist")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride("_method"));
@@ -88,7 +85,6 @@ app.post(
 );
 
 // PAYMENT ROUTES (DEMO MODE)
-app.get("/payment/:id", checkAuthenticated, renderPaymentPage);
 
 // Added direct route (no router) for confirming payment (Demo Mode)
 app.post("/payment/confirm/:id", checkAuthenticated, async (req, res) => {
@@ -102,6 +98,14 @@ app.post("/payment/confirm/:id", checkAuthenticated, async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Error confirming payment" });
   }
+});
+
+// Fallback route for SPA page navigation
+app.get("/{*splat}", (req, res, next) => {
+  if (req.path.startsWith("/api") || req.path.startsWith("/auth") || req.path.includes(".")) {
+    return next();
+  }
+  res.sendFile(path.join(__dirname, "client/dist/index.html"));
 });
 
 // Register Routers
