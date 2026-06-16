@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useCart } from "../context/CartContext";
 import Swal from "sweetalert2";
 import { CardSkeleton } from "../components/ui/Skeleton";
+import AnimatedCardStack from "../components/ui/animate-card-animation";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -73,75 +74,10 @@ export function Home() {
       .finally(() => setLoading(false));
   }, []);
 
-  // 1. GSAP Scroll Animation
+  // 1. GSAP Scroll Animation (Kept for other potential elements, but cleaned up feature-card logic)
   useEffect(() => {
     let ctx = gsap.context(() => {
-      let mm = gsap.matchMedia();
-
-      mm.add("(min-width: 1024px)", () => {
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: "#feature-scroll-section",
-            start: "top top",
-            end: "bottom bottom",
-            scrub: 1,
-            snap: {
-              snapTo: 1 / 4,
-              duration: { min: 0.3, max: 0.6 },
-              delay: 0,
-              ease: "power1.inOut",
-            },
-          },
-        });
-
-        const cards = document.querySelectorAll(".feature-card");
-
-        if (cards.length > 0) {
-          tl.to(cards[1], { y: 0, duration: 1, ease: "none" })
-            .to(cards[2], { y: 0, duration: 1, ease: "none" })
-            .to(cards[3], { y: 0, duration: 1, ease: "none" });
-
-          tl.add("zoomStart");
-          const gridWidth = 280;
-          const gridHeight = 400;
-          const gap = 24;
-          const commonGridProps = {
-            width: `${gridWidth}px`,
-            height: `${gridHeight}px`,
-            borderRadius: "1rem",
-            top: "50%",
-            y: "-50%",
-            ease: "power2.inOut",
-            duration: 1,
-          };
-
-          tl.to(".feature-card h3", { fontSize: "1.25rem", duration: 1 }, "zoomStart")
-            .to(".icon-container", { width: "3.5rem", height: "3.5rem", marginBottom: "1rem", duration: 1 }, "zoomStart")
-            .to(".icon-container svg", { width: "2rem", height: "2rem", duration: 1 }, "zoomStart");
-
-          tl.to(cards[0], { ...commonGridProps, left: `calc(50% - ${gridWidth * 2 + gap * 1.5}px)` }, "zoomStart")
-            .to(cards[1], { ...commonGridProps, left: `calc(50% - ${gridWidth * 1 + gap * 0.5}px)` }, "zoomStart")
-            .to(cards[2], { ...commonGridProps, left: `calc(50% + ${gap * 0.5}px)` }, "zoomStart")
-            .to(cards[3], { ...commonGridProps, left: `calc(50% + ${gridWidth * 1 + gap * 1.5}px)` }, "zoomStart");
-        }
-      });
-
-      mm.add("(max-width: 1023px)", () => {
-        gsap.set(".feature-card", {
-          position: "relative",
-          transform: "none",
-          height: "400px",
-          width: "100%",
-          marginBottom: "1rem",
-          borderRadius: "1rem",
-        });
-        gsap.set("#feature-scroll-section > div", { height: "auto" });
-        gsap.set("#feature-scroll-section .sticky", {
-          position: "relative",
-          height: "auto",
-          padding: "1rem",
-        });
-      });
+      // Logic for feature cards removed as it's replaced by AnimatedCardStack
     });
 
     return () => ctx.revert();
@@ -214,75 +150,8 @@ export function Home() {
         }
       `}</style>
 
-      {/* ─── 1. VIDEO HERO SECTION (EJS header.ejs) ─── */}
-      <section id="feature-scroll-section" className="relative bg-white dark:bg-gray-900 pt-24 lg:pt-0">
-        <div className="h-[100vh] lg:h-[500vh]">
-          <div className="sticky top-0 h-screen w-full overflow-hidden block">
-            
-            {/* Card 1: Always Fresh */}
-            <div className="feature-card absolute inset-0 w-full h-full z-10 bg-gray-900 overflow-hidden flex items-center justify-center">
-              <video className="absolute inset-0 w-full h-full object-cover opacity-60" autoPlay loop muted playsInline>
-                <source src="/videos/always-fresh.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-              <div className="relative z-10 flex flex-col items-center justify-center text-white text-center p-4">
-                <div className="icon-container h-32 w-32 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center mb-6">
-                  <svg className="w-16 h-16 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                </div>
-                <h3 className="text-6xl font-bold uppercase tracking-wide drop-shadow-lg">Always Fresh</h3>
-              </div>
-            </div>
-
-            {/* Card 2: Fast Delivery */}
-            <div className="feature-card absolute inset-0 w-full h-full z-20 bg-gray-900 overflow-hidden flex items-center justify-center translate-y-full">
-              <video className="absolute inset-0 w-full h-full object-cover opacity-60" autoPlay loop muted playsInline>
-                <source src="/videos/fast-delivery.mp4" type="video/mp4" />
-              </video>
-              <div className="relative z-10 flex flex-col items-center justify-center text-white text-center p-4">
-                <div className="icon-container h-32 w-32 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center mb-6">
-                  <svg className="w-16 h-16 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                </div>
-                <h3 className="text-6xl font-bold uppercase tracking-wide drop-shadow-lg">Fast Delivery</h3>
-              </div>
-            </div>
-
-            {/* Card 3: Secure Payment */}
-            <div className="feature-card absolute inset-0 w-full h-full z-30 bg-gray-900 overflow-hidden flex items-center justify-center translate-y-full">
-              <video className="absolute inset-0 w-full h-full object-cover opacity-60" autoPlay loop muted playsInline>
-                <source src="/videos/secure-payment.mp4" type="video/mp4" />
-              </video>
-              <div className="relative z-10 flex flex-col items-center justify-center text-white text-center p-4">
-                <div className="icon-container h-32 w-32 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center mb-6">
-                  <svg className="w-16 h-16 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
-                  </svg>
-                </div>
-                <h3 className="text-6xl font-bold uppercase tracking-wide drop-shadow-lg">Secure Payment</h3>
-              </div>
-            </div>
-
-            {/* Card 4: Support Center */}
-            <div className="feature-card absolute inset-0 w-full h-full z-40 bg-gray-900 overflow-hidden flex items-center justify-center translate-y-full">
-              <video className="absolute inset-0 w-full h-full object-cover opacity-60" autoPlay loop muted playsInline>
-                <source src="/videos/support-center.mp4" type="video/mp4" />
-              </video>
-              <div className="relative z-10 flex flex-col items-center justify-center text-white text-center p-4">
-                <div className="icon-container h-32 w-32 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center mb-6">
-                  <svg className="w-16 h-16 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                </div>
-                <h3 className="text-6xl font-bold uppercase tracking-wide drop-shadow-lg">Support Center</h3>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
+      {/* ─── 1. ANIMATED CARD STACK (Replaced Video Hero) ─── */}
+      <AnimatedCardStack />
 
       {/* ─── 2. CATEGORIES SECTION (EJS our_category.ejs) ─── */}
       <section id="our-menu" className="py-12 lg:py-16 bg-white dark:bg-gray-900">
