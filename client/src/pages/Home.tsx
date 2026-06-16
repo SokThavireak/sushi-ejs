@@ -6,7 +6,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useCart } from "../context/CartContext";
 import Swal from "sweetalert2";
 import { CardSkeleton } from "../components/ui/Skeleton";
-import AnimatedCardStack from "../components/ui/animate-card-animation";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -150,8 +149,7 @@ export function Home() {
         }
       `}</style>
 
-      {/* ─── 1. ANIMATED CARD STACK (Replaced Video Hero) ─── */}
-      <AnimatedCardStack />
+      {/* Categories Section */}
 
       {/* ─── 2. CATEGORIES SECTION (EJS our_category.ejs) ─── */}
       <section id="our-menu" className="py-12 lg:py-16 bg-white dark:bg-gray-900">
