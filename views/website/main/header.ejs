@@ -3,11 +3,12 @@
   <div class="h-[100vh] lg:h-[500vh]">
     <div class="sticky top-0 h-screen w-full overflow-hidden block">
       
+      <!-- Card 1: Premium Nigiri -->
       <div
         class="feature-card absolute inset-0 w-full h-full z-10 bg-gray-900 overflow-hidden flex items-center justify-center"
       >
         <video
-          class="absolute inset-0 w-full h-full object-cover opacity-60"
+          class="absolute inset-0 w-full h-full object-cover opacity-50"
           autoplay
           loop
           muted
@@ -17,40 +18,46 @@
             src="/videos/always-fresh.mp4"
             type="video/mp4"
           />
-          Your browser does not support the video tag.
         </video>
 
-        <div
-          class="relative z-10 flex flex-col items-center justify-center text-white text-center p-4"
-        >
-          <div
-            class="icon-container h-32 w-32 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center mb-6"
-          >
-            <svg
-              class="w-16 h-16 text-green-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M5 13l4 4L19 7"
-              ></path>
-            </svg>
-          </div>
-          <h3 class="text-6xl font-bold uppercase tracking-wide drop-shadow-lg">
-            Always Fresh
+        <div class="relative z-10 flex flex-col items-center justify-center text-white text-center p-4 max-w-5xl">
+          <span class="inline-block px-4 py-1.5 bg-orange-500 text-white text-xs md:text-sm font-bold uppercase tracking-widest rounded-full mb-6">
+            Chef's Recommendation
+          </span>
+          <h3 class="text-4xl md:text-8xl font-black text-white uppercase italic tracking-tighter mb-4 drop-shadow-2xl">
+            Premium Nigiri
           </h3>
+          <p class="text-gray-200 text-sm md:text-xl font-medium max-w-2xl mx-auto mb-8 drop-shadow-md">
+            Hand-pressed sushi rice topped with the finest cuts of bluefin tuna and fresh Atlantic salmon.
+          </p>
+
+          <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 md:p-6 max-w-xl mx-auto mb-8 transform -rotate-1 shadow-2xl hidden md:block">
+            <div class="flex justify-center gap-1 mb-2">
+              <% for(let i=0; i<5; i++) { %>
+                <i class="fa-solid fa-star text-yellow-400 text-xs"></i>
+              <% } %>
+            </div>
+            <p class="text-white text-sm md:text-base italic font-medium leading-relaxed mb-2">
+              "The best sushi I've ever had outside of Tokyo. Absolutely melt-in-your-mouth!"
+            </p>
+            <div class="text-orange-400 font-bold uppercase tracking-widest text-[10px]">
+              — Elena S.
+            </div>
+          </div>
+
+          <a href="/menu" class="group flex items-center gap-2 bg-white text-black hover:bg-orange-500 hover:text-white px-6 py-3 md:px-10 md:py-4 rounded-full text-sm md:text-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-2xl">
+            View Recommendations
+            <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+          </a>
         </div>
       </div>
 
+      <!-- Card 2: Dragon Rolls -->
       <div
         class="feature-card absolute inset-0 w-full h-full z-20 bg-gray-900 overflow-hidden flex items-center justify-center translate-y-full"
       >
         <video
-          class="absolute inset-0 w-full h-full object-cover opacity-60"
+          class="absolute inset-0 w-full h-full object-cover opacity-50"
           autoplay
           loop
           muted
@@ -62,37 +69,44 @@
           />
         </video>
 
-        <div
-          class="relative z-10 flex flex-col items-center justify-center text-white text-center p-4"
-        >
-          <div
-            class="icon-container h-32 w-32 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center mb-6"
-          >
-            <svg
-              class="w-16 h-16 text-blue-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-              ></path>
-            </svg>
-          </div>
-          <h3 class="text-6xl font-bold uppercase tracking-wide drop-shadow-lg">
-            Fast Delivery
+        <div class="relative z-10 flex flex-col items-center justify-center text-white text-center p-4 max-w-5xl">
+          <span class="inline-block px-4 py-1.5 bg-orange-500 text-white text-xs md:text-sm font-bold uppercase tracking-widest rounded-full mb-6">
+            Top Rated
+          </span>
+          <h3 class="text-4xl md:text-8xl font-black text-white uppercase italic tracking-tighter mb-4 drop-shadow-2xl">
+            Dragon Rolls
           </h3>
+          <p class="text-gray-200 text-sm md:text-xl font-medium max-w-2xl mx-auto mb-8 drop-shadow-md">
+            A fan favorite. Crispy tempura shrimp wrapped in velvety avocado with our signature eel sauce.
+          </p>
+
+          <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 md:p-6 max-w-xl mx-auto mb-8 transform rotate-1 shadow-2xl hidden md:block">
+            <div class="flex justify-center gap-1 mb-2">
+              <% for(let i=0; i<5; i++) { %>
+                <i class="fa-solid fa-star text-yellow-400 text-xs"></i>
+              <% } %>
+            </div>
+            <p class="text-white text-sm md:text-base italic font-medium leading-relaxed mb-2">
+              "Always arrives piping hot and beautifully presented. My go-to Friday night treat!"
+            </p>
+            <div class="text-orange-400 font-bold uppercase tracking-widest text-[10px]">
+              — Marcus J.
+            </div>
+          </div>
+
+          <a href="/menu" class="group flex items-center gap-2 bg-white text-black hover:bg-orange-500 hover:text-white px-6 py-3 md:px-10 md:py-4 rounded-full text-sm md:text-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-2xl">
+            View Recommendations
+            <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+          </a>
         </div>
       </div>
 
+      <!-- Card 3: Shio Ramen -->
       <div
         class="feature-card absolute inset-0 w-full h-full z-30 bg-gray-900 overflow-hidden flex items-center justify-center translate-y-full"
       >
         <video
-          class="absolute inset-0 w-full h-full object-cover opacity-60"
+          class="absolute inset-0 w-full h-full object-cover opacity-50"
           autoplay
           loop
           muted
@@ -104,37 +118,44 @@
           />
         </video>
 
-        <div
-          class="relative z-10 flex flex-col items-center justify-center text-white text-center p-4"
-        >
-          <div
-            class="icon-container h-32 w-32 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center mb-6"
-          >
-            <svg
-              class="w-16 h-16 text-purple-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-              ></path>
-            </svg>
-          </div>
-          <h3 class="text-6xl font-bold uppercase tracking-wide drop-shadow-lg">
-            Secure Payment
+        <div class="relative z-10 flex flex-col items-center justify-center text-white text-center p-4 max-w-5xl">
+          <span class="inline-block px-4 py-1.5 bg-orange-500 text-white text-xs md:text-sm font-bold uppercase tracking-widest rounded-full mb-6">
+            Authentic Taste
+          </span>
+          <h3 class="text-4xl md:text-8xl font-black text-white uppercase italic tracking-tighter mb-4 drop-shadow-2xl">
+            Shio Ramen
           </h3>
+          <p class="text-gray-200 text-sm md:text-xl font-medium max-w-2xl mx-auto mb-8 drop-shadow-md">
+            Light, clear broth seasoned with salt, served with handmade noodles and tender chashu pork.
+          </p>
+
+          <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 md:p-6 max-w-xl mx-auto mb-8 transform -rotate-1 shadow-2xl hidden md:block">
+            <div class="flex justify-center gap-1 mb-2">
+              <% for(let i=0; i<5; i++) { %>
+                <i class="fa-solid fa-star text-yellow-400 text-xs"></i>
+              <% } %>
+            </div>
+            <p class="text-white text-sm md:text-base italic font-medium leading-relaxed mb-2">
+              "The broth is so deep and flavorful. It reminds me of the hidden ramen shops in Osaka."
+            </p>
+            <div class="text-orange-400 font-bold uppercase tracking-widest text-[10px]">
+              — Kenji T.
+            </div>
+          </div>
+
+          <a href="/menu" class="group flex items-center gap-2 bg-white text-black hover:bg-orange-500 hover:text-white px-6 py-3 md:px-10 md:py-4 rounded-full text-sm md:text-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-2xl">
+            View Recommendations
+            <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+          </a>
         </div>
       </div>
 
+      <!-- Card 4: Spicy Maki -->
       <div
         class="feature-card absolute inset-0 w-full h-full z-40 bg-gray-900 overflow-hidden flex items-center justify-center translate-y-full"
       >
         <video
-          class="absolute inset-0 w-full h-full object-cover opacity-60"
+          class="absolute inset-0 w-full h-full object-cover opacity-50"
           autoplay
           loop
           muted
@@ -146,29 +167,35 @@
           />
         </video>
 
-        <div
-          class="relative z-10 flex flex-col items-center justify-center text-white text-center p-4"
-        >
-          <div
-            class="icon-container h-32 w-32 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center mb-6"
-          >
-            <svg
-              class="w-16 h-16 text-yellow-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              ></path>
-            </svg>
-          </div>
-          <h3 class="text-6xl font-bold uppercase tracking-wide drop-shadow-lg">
-            Support Center
+        <div class="relative z-10 flex flex-col items-center justify-center text-white text-center p-4 max-w-5xl">
+          <span class="inline-block px-4 py-1.5 bg-orange-500 text-white text-xs md:text-sm font-bold uppercase tracking-widest rounded-full mb-6">
+            Customer Favorite
+          </span>
+          <h3 class="text-4xl md:text-8xl font-black text-white uppercase italic tracking-tighter mb-4 drop-shadow-2xl">
+            Spicy Maki
           </h3>
+          <p class="text-gray-200 text-sm md:text-xl font-medium max-w-2xl mx-auto mb-8 drop-shadow-md">
+            Finely chopped spicy tuna or yellowtail with cucumber and spicy mayo for a perfect kick.
+          </p>
+
+          <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 md:p-6 max-w-xl mx-auto mb-8 transform rotate-1 shadow-2xl hidden md:block">
+            <div class="flex justify-center gap-1 mb-2">
+              <% for(let i=0; i<5; i++) { %>
+                <i class="fa-solid fa-star text-yellow-400 text-xs"></i>
+              <% } %>
+            </div>
+            <p class="text-white text-sm md:text-base italic font-medium leading-relaxed mb-2">
+              "Perfectly balanced heat. I order this every single time I visit. Highly recommended!"
+            </p>
+            <div class="text-orange-400 font-bold uppercase tracking-widest text-[10px]">
+              — Sarah L.
+            </div>
+          </div>
+
+          <a href="/menu" class="group flex items-center gap-2 bg-white text-black hover:bg-orange-500 hover:text-white px-6 py-3 md:px-10 md:py-4 rounded-full text-sm md:text-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-2xl">
+            View Recommendations
+            <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+          </a>
         </div>
       </div>
     </div>
