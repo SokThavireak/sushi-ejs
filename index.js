@@ -60,7 +60,6 @@ app.use(
 
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.static("public"));
-app.use(express.static(path.join(__dirname, "client/dist")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride("_method"));
@@ -103,14 +102,6 @@ app.post("/payment/confirm/:id", checkAuthenticated, async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Error confirming payment" });
   }
-});
-
-// Fallback route for SPA page navigation
-app.get("/{*splat}", (req, res, next) => {
-  if (req.path.startsWith("/api") || req.path.startsWith("/auth") || req.path.includes(".")) {
-    return next();
-  }
-  res.sendFile(path.join(__dirname, "client/dist/index.html"));
 });
 
 // Register Routers
