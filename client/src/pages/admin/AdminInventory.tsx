@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useHeader } from "../../context/HeaderContext";
 
 interface Product {
   id: number;
@@ -231,43 +232,47 @@ export default function AdminInventory() {
     return cat.name === activeCategory;
   });
 
+  const { setHeaderContent } = useHeader();
+
+  useEffect(() => {
+    setHeaderContent(
+      <div className="flex items-center gap-2">
+        <div className="relative w-48">
+          <i className="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-gray-400 text-xs"></i>
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-7 pr-3 py-1.5 border border-gray-200 dark:border-zinc-800 bg-white dark:bg-[#18181b] rounded-lg text-xs font-semibold text-gray-700 dark:text-white focus:outline-none shadow-sm transition-colors"
+          />
+        </div>
+
+        <button
+          onClick={() => setAddModalOpen(true)}
+          className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition flex items-center gap-1 shrink-0"
+        >
+          <i className="fa-solid fa-plus text-[10px]"></i> Add Product
+        </button>
+      </div>
+    );
+    return () => setHeaderContent(null);
+  }, [searchTerm, setHeaderContent]);
+
   return (
     <div className="space-y-6">
       {/* Toast Notifications */}
       <div id="toast-container" className="fixed top-24 right-4 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
 
       <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden transition-colors">
-        <div className="p-6 flex justify-between items-center border-b border-gray-100 dark:border-gray-800">
-          <h3 className="font-bold text-gray-805 dark:text-white text-lg">Product Inventory</h3>
-          <button
-            onClick={() => setAddModalOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-sm"
-          >
-            <i className="fa-solid fa-plus"></i> Add New Product
-          </button>
-        </div>
-
-        <div className="px-6 py-4 bg-gray-50 dark:bg-gray-955 border-b border-gray-100 dark:border-gray-800">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Type to search product name..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white focus:outline-none focus:border-blue-500 transition-colors shadow-sm"
-            />
-            <div className="absolute left-3 top-3 text-gray-400">
-              <i className="fa-solid fa-magnifying-glass"></i>
-            </div>
-          </div>
-
-          <div className="pt-4 flex flex-wrap gap-2">
+        <div className="px-6 py-4 bg-white dark:bg-gray-900 border-b border-gray-105 dark:border-gray-800">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setActiveCategory("all")}
               className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
                 activeCategory === "all"
-                  ? "bg-blue-600 text-white shadow-sm font-bold"
-                  : "bg-white dark:bg-gray-900 text-gray-650 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  ? "bg-zinc-950 text-white dark:bg-zinc-100 dark:text-zinc-950 shadow-sm font-bold"
+                  : "bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
               }`}
             >
               All
@@ -278,7 +283,7 @@ export default function AdminInventory() {
                 onClick={() => setActiveCategory(cat.name)}
                 className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
                   activeCategory === cat.name
-                    ? "bg-blue-600 text-white shadow-sm font-bold"
+                    ? "bg-zinc-950 text-white dark:bg-zinc-100 dark:text-zinc-950 shadow-sm font-bold"
                     : "bg-white dark:bg-gray-900 text-gray-655 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
                 }`}
               >

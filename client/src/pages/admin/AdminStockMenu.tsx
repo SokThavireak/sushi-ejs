@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useHeader } from "../../context/HeaderContext";
 
 interface StockItem {
   id: number;
@@ -14,6 +15,7 @@ interface StockItem {
 const API_BASE = import.meta.env.VITE_API_URL || "";
 
 export default function AdminStockMenu() {
+  const { setHeaderContent } = useHeader();
   const [stocks, setStocks] = useState<StockItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -21,6 +23,30 @@ export default function AdminStockMenu() {
   // Modals state
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+
+  useEffect(() => {
+    setHeaderContent(
+      <div className="flex items-center gap-2">
+        <div className="relative w-48">
+          <i className="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-gray-400 text-xs"></i>
+          <input
+            type="text"
+            placeholder="Search ingredients..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-7 pr-3 py-1.5 border border-gray-200 dark:border-zinc-800 bg-white dark:bg-[#18181b] rounded-lg text-xs font-semibold text-gray-700 dark:text-white focus:outline-none shadow-sm transition-colors placeholder-gray-400"
+          />
+        </div>
+        <button
+          onClick={() => setAddModalOpen(true)}
+          className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition flex items-center gap-1 shrink-0"
+        >
+          <i className="fa-solid fa-plus text-[10px]"></i> Add Item
+        </button>
+      </div>
+    );
+    return () => setHeaderContent(null);
+  }, [searchTerm, setHeaderContent]);
 
   // Add Item form states
   const [addName, setAddName] = useState("");
@@ -187,34 +213,6 @@ export default function AdminStockMenu() {
       <div id="toast-container" className="fixed top-24 right-4 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
 
       <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden transition-colors">
-        <div className="p-6 flex justify-between items-center border-b border-gray-100 dark:border-gray-800">
-          <div>
-            <h3 className="font-bold text-gray-805 dark:text-white text-lg">Master Ingredient List</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Define items available for stock requests</p>
-          </div>
-          <button
-            onClick={() => setAddModalOpen(true)}
-            className="bg-indigo-650 hover:bg-indigo-750 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-sm"
-          >
-            <i className="fa-solid fa-plus"></i> Add New Item
-          </button>
-        </div>
-
-        <div className="px-6 py-4 bg-gray-50 dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800 transition-colors">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search ingredients (e.g. Salmon, Cup, Napkin)..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-indigo-500 transition-colors bg-white dark:bg-gray-900 dark:text-white shadow-sm placeholder-gray-400"
-            />
-            <div className="absolute left-3 top-3 text-gray-400">
-              <i className="fa-solid fa-magnifying-glass"></i>
-            </div>
-          </div>
-        </div>
-
         <div className="p-6 bg-gray-50 dark:bg-gray-950 min-h-[400px] transition-colors space-y-8">
           {loading ? (
             <div className="text-center py-8 text-gray-500">

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useAuth } from "../../context/AuthContext";
+import { useHeader } from "../../context/HeaderContext";
 
 interface StockItem {
   id: number;
@@ -27,6 +28,7 @@ interface RequestLine {
 const API_BASE = import.meta.env.VITE_API_URL || "";
 
 export default function AdminCreateStockRequest() {
+  const { setHeaderContent } = useHeader();
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -37,6 +39,18 @@ export default function AdminCreateStockRequest() {
   // Form states
   const [locationName, setLocationName] = useState("");
   const [lines, setLines] = useState<RequestLine[]>([]);
+
+  useEffect(() => {
+    setHeaderContent(
+      <Link
+        to="/admin/stock"
+        className="text-gray-500 hover:text-orange-500 dark:text-zinc-400 dark:hover:text-orange-400 text-xs font-bold transition flex items-center gap-1.5 shrink-0"
+      >
+        <i className="fa-solid fa-arrow-left"></i> Cancel Request
+      </Link>
+    );
+    return () => setHeaderContent(null);
+  }, [setHeaderContent]);
 
   const fetchCreateData = async () => {
     try {
@@ -175,16 +189,6 @@ export default function AdminCreateStockRequest() {
 
   return (
     <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden my-10 transition-colors">
-      <div className="p-6 flex justify-between items-center border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-950/50">
-        <div>
-          <h3 className="font-bold text-gray-805 dark:text-white text-lg">Create Stock Request</h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Select items from the master menu to restock</p>
-        </div>
-        <Link to="/admin/stock" className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition">
-          <i className="fa-solid fa-xmark text-xl"></i>
-        </Link>
-      </div>
-
       <div className="p-8">
         {loading ? (
           <div className="text-center py-6 text-gray-500">

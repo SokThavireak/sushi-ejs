@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useHeader } from "../../context/HeaderContext";
 
 interface Order {
   id: number;
@@ -248,89 +249,93 @@ export default function AdminOrders() {
     }
   };
 
+  const { setHeaderContent } = useHeader();
+
+  useEffect(() => {
+    setHeaderContent(
+      <div className="flex items-center gap-2">
+        <input
+          type="date"
+          value={filterDate}
+          onChange={(e) => {
+            setFilterDate(e.target.value);
+            setSearchParams(prev => {
+              const next = new URLSearchParams(prev);
+              if (e.target.value) next.set("date", e.target.value);
+              else next.delete("date");
+              return next;
+            });
+          }}
+          className="px-2.5 py-1.5 border border-gray-200 dark:border-zinc-800 bg-white dark:bg-[#18181b] rounded-lg text-xs font-semibold text-gray-700 dark:text-white focus:outline-none shadow-sm transition-colors"
+        />
+
+        <select
+          value={filterLocation}
+          onChange={(e) => {
+            setFilterLocation(e.target.value);
+            setSearchParams(prev => {
+              const next = new URLSearchParams(prev);
+              if (e.target.value) next.set("location", e.target.value);
+              else next.delete("location");
+              return next;
+            });
+          }}
+          className="px-2.5 py-1.5 border border-gray-200 dark:border-zinc-800 bg-white dark:bg-[#18181b] rounded-lg text-xs font-semibold text-gray-700 dark:text-white focus:outline-none shadow-sm transition-colors"
+        >
+          <option value="">All Locations</option>
+          {locations.map((loc) => (
+            <option key={loc.id} value={loc.name}>
+              {loc.name}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={filterStatus}
+          onChange={(e) => {
+            setFilterStatus(e.target.value);
+            setSearchParams(prev => {
+              const next = new URLSearchParams(prev);
+              if (e.target.value) next.set("status", e.target.value);
+              else next.delete("status");
+              return next;
+            });
+          }}
+          className="px-2.5 py-1.5 border border-gray-200 dark:border-zinc-800 bg-white dark:bg-[#18181b] rounded-lg text-xs font-semibold text-gray-700 dark:text-white focus:outline-none shadow-sm transition-colors"
+        >
+          <option value="">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="Processing">Processing</option>
+          <option value="Completed">Completed</option>
+          <option value="Cancel Requested">Cancel Requested</option>
+          <option value="Refund Requested">Refund Requested</option>
+          <option value="Cancelled">Cancelled</option>
+          <option value="Refunded">Refunded</option>
+        </select>
+
+        {(filterDate || filterLocation || filterStatus) && (
+          <button
+            type="button"
+            onClick={() => {
+              setFilterDate("");
+              setFilterLocation("");
+              setFilterStatus("");
+              setSearchParams({});
+            }}
+            className="px-3 py-1.5 text-xs font-bold bg-gray-150 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-600 dark:text-gray-300 rounded-lg transition-all"
+          >
+            Clear
+          </button>
+        )}
+      </div>
+    );
+    return () => setHeaderContent(null);
+  }, [filterDate, filterLocation, filterStatus, locations, setHeaderContent, setSearchParams]);
+
   return (
     <div className="space-y-6">
       {/* Toast Notifications */}
       <div id="toast-container" className="fixed top-24 right-4 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
-
-      {/* Filter Form */}
-      <form
-        onSubmit={handleFilterSubmit}
-        className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col md:flex-row gap-4 items-end transition-colors"
-      >
-        <div className="w-full md:w-auto">
-          <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Filter Date</label>
-          <input
-            type="date"
-            value={filterDate}
-            onChange={(e) => setFilterDate(e.target.value)}
-            className="w-full md:w-48 bg-gray-50 dark:bg-gray-800 dark:text-white border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:border-indigo-500 transition-colors"
-          />
-        </div>
-
-        <div className="w-full md:w-auto flex-1">
-          <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Filter Location</label>
-          <div className="relative">
-            <select
-              value={filterLocation}
-              onChange={(e) => setFilterLocation(e.target.value)}
-              className="w-full bg-gray-50 dark:bg-gray-800 dark:text-white border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 appearance-none text-gray-700 focus:outline-none focus:border-indigo-500 transition-colors"
-            >
-              <option value="">All Locations</option>
-              {locations.map((loc) => (
-                <option key={loc.id} value={loc.name}>
-                  {loc.name}
-                </option>
-              ))}
-            </select>
-            <div className="absolute right-3 top-2.5 text-gray-400 pointer-events-none">
-              <i className="fa-solid fa-chevron-down text-xs"></i>
-            </div>
-          </div>
-        </div>
-
-        <div className="w-full md:w-auto">
-          <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Filter Status</label>
-          <div className="relative">
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="w-full bg-gray-50 dark:bg-gray-800 dark:text-white border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 appearance-none text-gray-700 focus:outline-none focus:border-indigo-500 transition-colors"
-            >
-              <option value="">All Statuses</option>
-              <option value="Pending">Pending</option>
-              <option value="Processing">Processing</option>
-              <option value="Completed">Completed</option>
-              <option value="Cancel Requested">Cancel Requested</option>
-              <option value="Refund Requested">Refund Requested</option>
-              <option value="Cancelled">Cancelled</option>
-              <option value="Refunded">Refunded</option>
-            </select>
-            <div className="absolute right-3 top-2.5 text-gray-400 pointer-events-none">
-              <i className="fa-solid fa-chevron-down text-xs"></i>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex gap-2 w-full md:w-auto">
-          <button
-            type="submit"
-            className="flex-1 md:flex-none bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg transition-all shadow-sm flex items-center justify-center gap-2"
-          >
-            <i className="fa-solid fa-filter"></i> Filter
-          </button>
-
-          {(filterDate || filterLocation || filterStatus) && (
-            <button
-              type="button"
-              onClick={handleClearFilters}
-              className="bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 font-bold py-2 px-4 rounded-lg transition-all flex items-center justify-center"
-            >
-              Clear
-            </button>
-          )}
-        </div>
-      </form>
 
       {/* Table Section */}
       <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden transition-colors">

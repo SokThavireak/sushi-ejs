@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useAuth } from "../../context/AuthContext";
+import { useHeader } from "../../context/HeaderContext";
 
 interface MasterItem {
   id: number;
@@ -163,100 +164,87 @@ export default function ManagerDailyStock() {
 
   const isHeadManagerOrAdmin = user && ["admin", "manager"].includes(user.role.trim().toLowerCase());
 
+  const { setHeaderContent } = useHeader();
+
+  useEffect(() => {
+    setHeaderContent(
+      <div className="flex items-center gap-2">
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => handleDateChange(e.target.value)}
+          className="px-2.5 py-1.5 border border-gray-200 dark:border-zinc-800 bg-white dark:bg-[#18181b] rounded-lg text-xs font-semibold text-gray-700 dark:text-white focus:outline-none shadow-sm transition-colors"
+        />
+
+        {isHeadManagerOrAdmin ? (
+          <select
+            value={locationId}
+            onChange={(e) => handleLocationChange(e.target.value)}
+            className="px-2.5 py-1.5 border border-gray-200 dark:border-zinc-800 bg-white dark:bg-[#18181b] rounded-lg text-xs font-semibold text-gray-700 dark:text-white focus:outline-none shadow-sm transition-colors min-w-[140px]"
+          >
+            {locations.map((loc) => (
+              <option key={loc.id} value={loc.id}>
+                {loc.name}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <div className="bg-gray-100 dark:bg-[#18181b] border border-gray-200 dark:border-zinc-800 text-gray-650 dark:text-gray-300 text-xs rounded-lg px-3 py-1.5 shadow-sm min-w-[140px] flex justify-between items-center cursor-not-allowed font-bold">
+            <span>{locationName}</span>
+            <i className="fa-solid fa-lock text-[10px] text-gray-400 ml-2"></i>
+          </div>
+        )}
+      </div>
+    );
+    return () => setHeaderContent(null);
+  }, [date, locationId, locations, isHeadManagerOrAdmin, locationName, setHeaderContent]);
+
   // Filtered master items
   const categories = ["Cook", "Drink", "Supplies", "Packaging"];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 my-6 space-y-6">
+    <div className="w-full my-6 space-y-6">
       {/* Toast Notifications */}
       <div id="toast-container" className="fixed top-24 right-4 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
 
-      <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 transition-colors">
-        <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-6">
-          <div className="flex-1">
-            <h3 className="font-bold text-gray-800 dark:text-white text-2xl mb-1">Daily Stock Count</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Log physical inventory for{" "}
-              <span className="font-bold text-indigo-650 dark:text-indigo-400">
-                {new Date(date).toLocaleDateString()}
-              </span>
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-            <div className="flex-1">
-              <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Date</label>
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => handleDateChange(e.target.value)}
-                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-white text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block px-3 py-2 shadow-sm"
-              />
-            </div>
-
-            <div className="flex-1">
-              <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Location</label>
-              {isHeadManagerOrAdmin ? (
-                <select
-                  value={locationId}
-                  onChange={(e) => handleLocationChange(e.target.value)}
-                  className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-750 dark:text-white text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block px-3 py-2 shadow-sm min-w-[160px]"
-                >
-                  {locations.map((loc) => (
-                    <option key={loc.id} value={loc.id}>
-                      {loc.name}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <div className="bg-gray-105 dark:bg-gray-800 border border-gray-200 dark:border-gray-750 text-gray-600 dark:text-gray-300 text-sm rounded-lg px-3 py-2 shadow-sm min-w-[160px] flex justify-between items-center cursor-not-allowed font-bold">
-                  <span>{locationName}</span>
-                  <i className="fa-solid fa-lock text-xs text-gray-400"></i>
-                </div>
-              )}
-            </div>
+      <div className="flex flex-col items-center gap-6 bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 transition-colors">
+        <div className="relative w-full max-w-2xl">
+          <input
+            type="text"
+            placeholder="Search ingredients..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-12 pr-4 py-3 rounded-full border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 shadow-sm text-gray-700 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-gray-900 focus:outline-none transition-all placeholder-gray-450"
+          />
+          <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-lg">
+            <i className="fa-solid fa-magnifying-glass"></i>
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col items-center gap-6">
-          <div className="relative w-full max-w-2xl">
-            <input
-              type="text"
-              placeholder="Search ingredients..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 rounded-full border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 shadow-sm text-gray-700 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-gray-900 focus:outline-none transition-all placeholder-gray-450"
-            />
-            <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-lg">
-              <i className="fa-solid fa-magnifying-glass"></i>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-2">
+        <div className="flex flex-wrap justify-center gap-2">
+          <button
+            onClick={() => setSelectedCategory("all")}
+            className={`px-5 py-2 rounded-full font-bold text-sm transition-all shadow-sm ${
+              selectedCategory === "all"
+                ? "bg-indigo-650 text-white transform scale-105"
+                : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+            }`}
+          >
+            All
+          </button>
+          {categories.map((cat) => (
             <button
-              onClick={() => setSelectedCategory("all")}
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
               className={`px-5 py-2 rounded-full font-bold text-sm transition-all shadow-sm ${
-                selectedCategory === "all"
+                selectedCategory === cat
                   ? "bg-indigo-650 text-white transform scale-105"
                   : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
               }`}
             >
-              All
+              {cat}
             </button>
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-5 py-2 rounded-full font-bold text-sm transition-all shadow-sm ${
-                  selectedCategory === cat
-                    ? "bg-indigo-650 text-white transform scale-105"
-                    : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+          ))}
         </div>
       </div>
 

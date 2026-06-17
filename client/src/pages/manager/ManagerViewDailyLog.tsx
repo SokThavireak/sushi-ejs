@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useHeader } from "../../context/HeaderContext";
 
 interface LogItem {
   id: number;
@@ -23,12 +24,43 @@ interface StockLog {
 const API_BASE = import.meta.env.VITE_API_URL || "";
 
 export default function ManagerViewDailyLog() {
+  const { setHeaderContent } = useHeader();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   const [log, setLog] = useState<StockLog | null>(null);
   const [items, setItems] = useState<LogItem[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (log) {
+      setHeaderContent(
+        <div className="flex items-center gap-3 text-xs font-semibold">
+          <span className="text-gray-500 dark:text-zinc-400">
+            Location: <span className="text-orange-500 font-bold">{log.location_name}</span>
+          </span>
+          <span className="text-gray-200 dark:text-zinc-800">|</span>
+          <span className="text-gray-500 dark:text-zinc-400">
+            Date: <span className="text-gray-900 dark:text-white font-bold">{new Date(log.report_date).toLocaleDateString()}</span>
+          </span>
+          <span className="text-gray-200 dark:text-zinc-800">|</span>
+          <span className="text-gray-500 dark:text-zinc-400">
+            Reporter: <span className="text-gray-900 dark:text-white font-bold">{log.email || "Unknown"}</span>
+          </span>
+          <span className="text-gray-200 dark:text-zinc-800">|</span>
+          <Link
+            to="/manager/daily-stock/history"
+            className="text-gray-500 hover:text-orange-500 dark:text-zinc-400 dark:hover:text-orange-400 font-bold"
+          >
+            Back to History
+          </Link>
+        </div>
+      );
+    } else {
+      setHeaderContent(null);
+    }
+    return () => setHeaderContent(null);
+  }, [log, setHeaderContent]);
 
   const fetchLogDetails = async () => {
     try {
@@ -75,43 +107,9 @@ export default function ManagerViewDailyLog() {
   const hasItems = items.length > 0;
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 my-6">
-      <Link
-        to="/manager/daily-stock/history"
-        className="inline-flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white font-bold text-sm transition"
-      >
-        <i className="fa-solid fa-arrow-left"></i> Back to History
-      </Link>
-
+    <div className="w-full space-y-6 my-6">
       <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-105 dark:border-gray-800 overflow-hidden transition-colors">
-        <div className="p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-950/30 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-808 dark:text-white mb-1">Daily Stock Report</h1>
-            <div className="flex flex-wrap gap-4 text-sm text-gray-500 dark:text-gray-400 mt-2">
-              <p className="flex items-center gap-2">
-                <i className="fa-regular fa-calendar"></i>
-                <span className="font-bold text-gray-700 dark:text-gray-200">
-                  {new Date(log.report_date).toLocaleDateString()}
-                </span>
-              </p>
-              <p className="flex items-center gap-2">
-                <i className="fa-regular fa-user"></i>
-                <span className="font-bold text-gray-700 dark:text-gray-200">
-                  {log.email || "Unknown"}
-                </span>
-              </p>
-            </div>
-          </div>
-          <div className="text-right flex flex-col items-end">
-            <span className="bg-indigo-600 text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-sm flex items-center gap-2">
-              <i className="fa-solid fa-location-dot text-xs"></i>
-              {log.location_name}
-            </span>
-            <p className="text-xs text-gray-450 mt-2 font-mono">Log ID: #{log.id}</p>
-          </div>
-        </div>
-
-        <div className="p-8 bg-gray-50/50 dark:bg-gray-950/50">
+        <div className="p-8">
           {hasItems ? (
             categories.map((cat) => {
               const catItems = items.filter((item) => item.category === cat);

@@ -66,7 +66,7 @@ export const StaffMenu: React.FC = () => {
   const displayCategories = [{ id: 0, name: "All" }, ...categories];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 mt-24 lg:mt-32 font-sans pb-16 min-h-screen">
+    <div className="w-full px-4 sm:px-6 mt-24 lg:mt-32 font-sans pb-16 min-h-screen">
       {/* Toast alert */}
       {toastMsg && (
         <div className="fixed top-24 right-4 z-[9999] flex flex-col gap-3 pointer-events-none">

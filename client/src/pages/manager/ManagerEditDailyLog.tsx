@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useHeader } from "../../context/HeaderContext";
 
 interface LogItem {
   id: number;
@@ -21,6 +22,7 @@ interface StockLog {
 const API_BASE = import.meta.env.VITE_API_URL || "";
 
 export default function ManagerEditDailyLog() {
+  const { setHeaderContent } = useHeader();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -30,6 +32,32 @@ export default function ManagerEditDailyLog() {
 
   // Edit item quantities map
   const [quantities, setQuantities] = useState<Record<number, string>>({});
+
+  useEffect(() => {
+    if (log) {
+      setHeaderContent(
+        <div className="flex items-center gap-3 text-xs font-semibold">
+          <span className="text-gray-500 dark:text-zinc-400">
+            Location: <span className="text-orange-500 font-bold">{log.location_name}</span>
+          </span>
+          <span className="text-gray-200 dark:text-zinc-800">|</span>
+          <span className="text-gray-500 dark:text-zinc-400">
+            Date: <span className="text-gray-900 dark:text-white font-bold">{new Date(log.report_date).toLocaleDateString()}</span>
+          </span>
+          <span className="text-gray-200 dark:text-zinc-800">|</span>
+          <Link
+            to="/manager/daily-stock/history"
+            className="text-gray-500 hover:text-orange-500 dark:text-zinc-400 dark:hover:text-orange-400 font-bold"
+          >
+            Cancel
+          </Link>
+        </div>
+      );
+    } else {
+      setHeaderContent(null);
+    }
+    return () => setHeaderContent(null);
+  }, [log, setHeaderContent]);
 
   const fetchLogDetails = async () => {
     try {
@@ -143,25 +171,11 @@ export default function ManagerEditDailyLog() {
   const categories = ["Cook", "Drink", "Supplies", "Packaging"];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 my-6 space-y-6">
+    <div className="w-full my-6 space-y-6">
       {/* Toast Notifications */}
       <div id="toast-container" className="fixed top-24 right-4 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
 
-      <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 mb-8 flex justify-between items-center transition-colors">
-        <div>
-          <h3 className="font-bold text-gray-808 dark:text-white text-2xl mb-1">Edit Stock Report #{log.id}</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Location: <span className="font-bold text-indigo-600 dark:text-indigo-400">{log.location_name}</span> | Date:{" "}
-            {new Date(log.report_date).toLocaleDateString()}
-          </p>
-        </div>
-        <Link
-          to="/manager/daily-stock/history"
-          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white font-bold text-sm"
-        >
-          Cancel
-        </Link>
-      </div>
+
 
       <form onSubmit={handleSubmit}>
         {categories.map((cat) => {

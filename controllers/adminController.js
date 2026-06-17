@@ -187,7 +187,15 @@ app.get("/api/admin/dashboard", checkAuthenticated, checkRole(["manager", "admin
     const orderCountRes = await client.query(`SELECT COUNT(*) FROM orders WHERE 1=1 ${locationFilterClause}`, queryParams);
     const revenueRes = await client.query(`SELECT SUM(total_price) FROM orders WHERE status = 'Completed' ${locationFilterClause}`, queryParams);
     
-    const chartRes = await client.query(`SELECT to_char(created_at, 'Mon DD') as day, SUM(total_price) as daily_sales FROM orders WHERE status = 'Completed' AND created_at > NOW() - INTERVAL '7 days' ${locationFilterClause} GROUP BY day, created_at ORDER BY created_at ASC`, queryParams);
+    // Group daily sales correctly by date to avoid multiple duplicate day labels
+    const chartRes = await client.query(`SELECT to_char(created_at, 'Mon DD') as day, SUM(total_price) as daily_sales FROM orders WHERE status = 'Completed' AND created_at > NOW() - INTERVAL '7 days' ${locationFilterClause} GROUP BY DATE(created_at), to_char(created_at, 'Mon DD') ORDER BY DATE(created_at) ASC`, queryParams);
+    
+    // Get average order value trend for the last 7 days
+    const avgValueRes = await client.query(`SELECT to_char(created_at, 'Mon DD') as day, AVG(total_price) as avg_value FROM orders WHERE status = 'Completed' AND created_at > NOW() - INTERVAL '7 days' ${locationFilterClause} GROUP BY DATE(created_at), to_char(created_at, 'Mon DD') ORDER BY DATE(created_at) ASC`, queryParams);
+
+    // Get sales by location breakdown
+    const locationSalesRes = await client.query(`SELECT COALESCE(pickup_location, 'Online / Delivery') as location, SUM(total_price) as sales FROM orders WHERE status = 'Completed' ${locationFilterClause} GROUP BY pickup_location`, queryParams);
+
     const statusRes = await client.query(`SELECT status, COUNT(*) as count FROM orders WHERE 1=1 ${locationFilterClause} GROUP BY status`, queryParams);
 
     client.release();
@@ -197,6 +205,8 @@ app.get("/api/admin/dashboard", checkAuthenticated, checkRole(["manager", "admin
       ordersCount: parseInt(orderCountRes.rows[0].count),
       totalRevenue: parseFloat(revenueRes.rows[0].sum || 0).toFixed(2),
       chartData: chartRes.rows,
+      avgValueData: avgValueRes.rows,
+      locationData: locationSalesRes.rows,
       statusData: statusRes.rows,
       locations: allLocationsRes.rows,
       currentFilter: filterLocationName || "All"

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useHeader } from "../../context/HeaderContext";
 
 interface Location {
   id: number;
@@ -15,12 +16,25 @@ interface Location {
 const API_BASE = import.meta.env.VITE_API_URL || "";
 
 export default function AdminLocations() {
+  const { setHeaderContent } = useHeader();
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Modals state
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+
+  useEffect(() => {
+    setHeaderContent(
+      <button
+        onClick={() => setAddModalOpen(true)}
+        className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow transition shrink-0"
+      >
+        + Add Location
+      </button>
+    );
+    return () => setHeaderContent(null);
+  }, [setHeaderContent]);
 
   // Add Location form states
   const [addName, setAddName] = useState("");
@@ -186,16 +200,6 @@ export default function AdminLocations() {
       <div id="toast-container" className="fixed top-24 right-4 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
 
       <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden transition-colors">
-        <div className="p-6 flex justify-between items-center border-b border-gray-100 dark:border-gray-800">
-          <h3 className="font-bold text-gray-805 dark:text-white text-lg">Location Management</h3>
-          <button
-            onClick={() => setAddModalOpen(true)}
-            className="bg-blue-600 hover:bg-blue-750 text-white px-4 py-2 rounded-lg text-sm font-bold shadow hover:bg-blue-700 transition"
-          >
-            + Add Location
-          </button>
-        </div>
-
         <div className="p-6">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">

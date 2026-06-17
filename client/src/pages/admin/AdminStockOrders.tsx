@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useAuth } from "../../context/AuthContext";
+import { useHeader } from "../../context/HeaderContext";
 
 interface StockItem {
   id: number;
@@ -33,6 +34,7 @@ interface CartItem extends StockItem {
 const API_BASE = import.meta.env.VITE_API_URL || "";
 
 export default function AdminStockOrders() {
+  const { setHeaderContent } = useHeader();
   const { user } = useAuth();
   const [requests, setRequests] = useState<StockRequest[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
@@ -42,6 +44,41 @@ export default function AdminStockOrders() {
   // Filter and Search states for inventory
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+
+  const isStoreManager = user?.role?.trim().toLowerCase() === "store_manager";
+
+  useEffect(() => {
+    if (isStoreManager) {
+      setHeaderContent(
+        <div className="flex items-center gap-2">
+          <div className="relative w-48">
+            <i className="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-gray-400 text-xs"></i>
+            <input
+              type="text"
+              placeholder="Search items..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-7 pr-3 py-1.5 border border-gray-200 dark:border-zinc-800 bg-white dark:bg-[#18181b] rounded-lg text-xs font-semibold text-gray-700 dark:text-white focus:outline-none shadow-sm transition-colors placeholder-gray-400"
+            />
+          </div>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="bg-white dark:bg-[#18181b] border border-gray-200 dark:border-zinc-800 text-xs font-semibold text-gray-700 dark:text-white rounded-lg px-2.5 py-1.5 focus:outline-none shadow-sm transition-colors cursor-pointer"
+          >
+            <option value="All">All Categories</option>
+            <option value="Cook">Cook</option>
+            <option value="Drink">Drink</option>
+            <option value="Supplies">Supplies</option>
+            <option value="Packaging">Packaging</option>
+          </select>
+        </div>
+      );
+    } else {
+      setHeaderContent(null);
+    }
+    return () => setHeaderContent(null);
+  }, [isStoreManager, searchTerm, selectedCategory, setHeaderContent]);
 
   // Cart state
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -231,7 +268,6 @@ export default function AdminStockOrders() {
     }
   };
 
-  const isStoreManager = user?.role?.trim().toLowerCase() === "store_manager";
   const isAdminOrManager = ["admin", "manager"].includes(user?.role?.trim().toLowerCase() || "");
 
   // Filtered inventory
@@ -251,7 +287,7 @@ export default function AdminStockOrders() {
           {/* Master Inventory Left */}
           <div className="w-full lg:w-[70%] bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col h-full transition-colors overflow-hidden">
             <div className="p-5 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 z-10 shrink-0">
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex justify-between items-center">
                 <div>
                   <h2 className="text-xl font-bold text-gray-805 dark:text-white">Master Inventory</h2>
                   <p className="text-xs text-gray-500 dark:text-gray-400">Select items to request from the warehouse</p>
@@ -267,33 +303,6 @@ export default function AdminStockOrders() {
                     />
                   </div>
                 </div>
-              </div>
-
-              <div className="relative">
-                <i className="fa-solid fa-search absolute left-4 top-3.5 text-gray-400"></i>
-                <input
-                  type="text"
-                  placeholder="Search ingredients (e.g. Salmon, Cup, Rice)..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3 bg-gray-50 dark:bg-gray-850 dark:text-white border-none rounded-xl font-medium focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-900 outline-none transition-all"
-                />
-              </div>
-
-              <div className="flex gap-2 mt-4 overflow-x-auto pb-2 scrollbar-thin">
-                {["All", "Cook", "Drink", "Supplies", "Packaging"].map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${
-                      selectedCategory === cat
-                        ? "bg-indigo-600 text-white"
-                        : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
               </div>
             </div>
 

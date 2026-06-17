@@ -1,4 +1,15 @@
-import React from "react";
+import React from "react"
+import { cn } from "@/lib/utils"
+
+function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="skeleton"
+      className={cn("animate-pulse rounded-md bg-muted", className)}
+      {...props}
+    />
+  )
+}
 
 // Base Shimmer Overlay CSS
 const shimmerClass = "relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-shimmer before:bg-gradient-to-r before:from-transparent before:via-white/20 dark:before:via-white/10 before:to-transparent";
@@ -105,3 +116,5 @@ export const OfferBannerSkeleton: React.FC = () => {
     </div>
   );
 };
+
+export { Skeleton }

@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useAuth } from "../../context/AuthContext";
+import { useHeader } from "../../context/HeaderContext";
 
 interface RequestItem {
   id: number;
@@ -28,6 +29,7 @@ interface Location {
 const API_BASE = import.meta.env.VITE_API_URL || "";
 
 export default function AdminViewStockRequest() {
+  const { setHeaderContent } = useHeader();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -40,6 +42,47 @@ export default function AdminViewStockRequest() {
   // Quick filter states (navigates back to stock orders list with filters)
   const [filterDate, setFilterDate] = useState("");
   const [filterLocation, setFilterLocation] = useState("");
+
+  const handleFilterChange = (date: string, location: string) => {
+    const queryParts: string[] = [];
+    if (date) queryParts.push(`date=${date}`);
+    if (location) queryParts.push(`location=${location}`);
+    const queryString = queryParts.length > 0 ? `?${queryParts.join("&")}` : "";
+    navigate(`/admin/stock${queryString}`);
+  };
+
+  useEffect(() => {
+    setHeaderContent(
+      <div className="flex items-center gap-2 text-xs font-semibold">
+        <span className="text-gray-400 dark:text-zinc-500 uppercase text-[10px] tracking-wider shrink-0">Filter List:</span>
+        <input
+          type="date"
+          value={filterDate}
+          onChange={(e) => {
+            setFilterDate(e.target.value);
+            handleFilterChange(e.target.value, filterLocation);
+          }}
+          className="bg-white dark:bg-[#18181b] border border-gray-200 dark:border-zinc-800 text-gray-700 dark:text-white rounded-lg px-2 py-1.5 focus:outline-none shadow-sm transition-colors text-xs shrink-0"
+        />
+        <select
+          value={filterLocation}
+          onChange={(e) => {
+            setFilterLocation(e.target.value);
+            handleFilterChange(filterDate, e.target.value);
+          }}
+          className="bg-white dark:bg-[#18181b] border border-gray-200 dark:border-zinc-800 text-gray-700 dark:text-white rounded-lg px-2.5 py-1.5 focus:outline-none shadow-sm transition-colors cursor-pointer text-xs shrink-0"
+        >
+          <option value="">All Locations</option>
+          {locations.map((loc) => (
+            <option key={loc.id} value={loc.id}>
+              {loc.name}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
+    return () => setHeaderContent(null);
+  }, [filterDate, filterLocation, locations, setHeaderContent]);
 
   const fetchRequestDetails = async () => {
     try {
@@ -77,14 +120,6 @@ export default function AdminViewStockRequest() {
     });
   };
 
-  const handleFilterSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const queryParts: string[] = [];
-    if (filterDate) queryParts.push(`date=${filterDate}`);
-    if (filterLocation) queryParts.push(`location=${filterLocation}`);
-    const queryString = queryParts.length > 0 ? `?${queryParts.join("&")}` : "";
-    navigate(`/admin/stock${queryString}`);
-  };
 
   const handleStatusUpdate = async (status: string) => {
     const isDark = document.documentElement.classList.contains("dark");
@@ -146,49 +181,6 @@ export default function AdminViewStockRequest() {
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Toast Notifications */}
       <div id="toast-container" className="fixed top-24 right-4 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
-
-      {/* Filter Section */}
-      <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 transition-colors">
-        <form onSubmit={handleFilterSubmit} className="flex flex-col sm:flex-row gap-4 items-end">
-          <div className="w-full sm:w-auto">
-            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Select Date</label>
-            <input
-              type="date"
-              value={filterDate}
-              onChange={(e) => setFilterDate(e.target.value)}
-              className="w-full sm:w-48 bg-gray-50 dark:bg-gray-800 dark:text-white border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:border-indigo-500 transition-colors"
-            />
-          </div>
-
-          <div className="w-full sm:w-auto flex-1">
-            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Select Location</label>
-            <div className="relative">
-              <select
-                value={filterLocation}
-                onChange={(e) => setFilterLocation(e.target.value)}
-                className="w-full bg-gray-50 dark:bg-gray-800 dark:text-white border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 appearance-none text-gray-700 focus:outline-none focus:border-indigo-500 transition-colors"
-              >
-                <option value="">All Locations</option>
-                {locations.map((loc) => (
-                  <option key={loc.id} value={loc.id}>
-                    {loc.name}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute right-3 top-2.5 text-gray-400 pointer-events-none">
-                <i className="fa-solid fa-chevron-down text-xs"></i>
-              </div>
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg transition-all shadow-sm flex items-center justify-center gap-2"
-          >
-            <i className="fa-solid fa-filter"></i> Filter
-          </button>
-        </form>
-      </div>
 
       {/* Main Request Display */}
       <div className="bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 transition-colors">

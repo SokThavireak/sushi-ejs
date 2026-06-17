@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useAuth } from "../../context/AuthContext";
+import { useHeader } from "../../context/HeaderContext";
 
 interface Category {
   id: number;
@@ -137,36 +138,24 @@ export default function AdminCategory() {
   const userRole = user?.role || "user";
   const isAdmin = userRole.trim().toLowerCase() === "admin";
 
+  const { setHeaderContent } = useHeader();
+
+  useEffect(() => {
+    setHeaderContent(
+      <button
+        onClick={() => setAddModalOpen(true)}
+        className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition flex items-center gap-1 shrink-0"
+      >
+        <i className="fa-solid fa-plus text-[10px]"></i> Add Category
+      </button>
+    );
+    return () => setHeaderContent(null);
+  }, [setHeaderContent]);
+
   return (
     <div className="space-y-6">
       {/* Toast Notifications */}
       <div id="toast-container" className="fixed top-24 right-4 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
-
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden mb-6 transition-colors">
-        <div className="p-6 flex justify-between items-center border-b border-gray-100 dark:border-gray-800">
-          <div>
-            <h3 className="font-bold text-gray-808 dark:text-white text-xl">Category Management</h3>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-              Current Access:{" "}
-              <span
-                className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${
-                  isAdmin
-                    ? "bg-purple-100 text-purple-750 dark:bg-purple-900/50 dark:text-purple-300"
-                    : "bg-blue-100 text-blue-750 dark:bg-blue-900/50 dark:text-blue-300"
-                }`}
-              >
-                {userRole}
-              </span>
-            </p>
-          </div>
-          <button
-            onClick={() => setAddModalOpen(true)}
-            className="bg-blue-650 hover:bg-blue-750 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-sm"
-          >
-            <i className="fa-solid fa-plus"></i> Add Category
-          </button>
-        </div>
-      </div>
 
       {loading ? (
         <div className="text-center py-8 text-gray-500">
