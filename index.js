@@ -8,6 +8,7 @@ import connectPgSimple from "connect-pg-simple";
 import methodOverride from "method-override";
 import path from "path";
 import { fileURLToPath } from "url";
+import fs from "fs";
 
 import pool from "./config/db.js";
 import upload from "./config/cloudinary.js";
@@ -132,7 +133,12 @@ app.get("/{*splat}", (req, res, next) => {
   if (req.path.startsWith("/api") || req.path.startsWith("/auth") || req.path.includes(".")) {
     return next();
   }
-  res.sendFile(path.join(__dirname, "client/dist/index.html"));
+  const indexPath = path.join(__dirname, "client/dist/index.html");
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.send("Sushi Store API is running.");
+  }
 });
 
 // Start Server
