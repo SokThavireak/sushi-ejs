@@ -128,7 +128,7 @@ app.use("/", adminController);
 app.use("/", managerController);
 
 // Fallback route for SPA page navigation (MUST BE LAST)
-app.get("*", (req, res, next) => {
+app.get("/{*splat}", (req, res, next) => {
   if (req.path.startsWith("/api") || req.path.startsWith("/auth") || req.path.includes(".")) {
     return next();
   }
