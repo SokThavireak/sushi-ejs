@@ -31,6 +31,10 @@ services:
           type: web
           name: sushi-backend
           property: host
+      - key: ADMIN_EMAIL
+        value: "admin@opulent.com,boss@opulent.com"
+      - key: ADMIN_PASSWORD
+        value: "admin123,boss123"
 
   # 2. React Vite Static Site Frontend
   - type: web
