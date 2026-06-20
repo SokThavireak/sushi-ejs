@@ -29,6 +29,35 @@ export default function AdminInventory() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
+  const observerTarget = React.useRef<HTMLDivElement>(null);
+  const [visibleLimit, setVisibleLimit] = useState<number>(10);
+
+  useEffect(() => {
+    setVisibleLimit(10);
+  }, [activeCategory, searchTerm]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisibleLimit((prev) => prev + 10);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentTarget = observerTarget.current;
+    if (currentTarget) {
+      observer.observe(currentTarget);
+    }
+
+    return () => {
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
+      }
+    };
+  }, [products, activeCategory, searchTerm]);
+
   // Modals state
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -209,20 +238,31 @@ export default function AdminInventory() {
     }
   };
 
-  const getFilteredProductsByCategory = (catName: string) => {
-    let filtered = products;
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+    if (!matchesSearch) return false;
 
-    // First filter by search term if active
-    if (searchTerm) {
-      filtered = filtered.filter((p) => p.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    if (activeCategory !== "all") {
+      if (activeCategory === "On Sale") {
+        return product.discount_type && product.discount_type !== "none" && Number(product.discount_value) > 0;
+      }
+      if (activeCategory === "Most Sales") {
+        return !!product.is_best_seller;
+      }
+      return product.category === activeCategory;
     }
+    return true;
+  });
 
+  const displayedProducts = filteredProducts.slice(0, visibleLimit);
+
+  const getFilteredProductsByCategory = (catName: string) => {
     if (catName === "On Sale") {
-      return filtered.filter((p) => p.discount_type && p.discount_type !== "none" && Number(p.discount_value) > 0);
+      return displayedProducts.filter((p) => p.discount_type && p.discount_type !== "none" && Number(p.discount_value) > 0);
     } else if (catName === "Most Sales") {
-      return filtered.filter((p) => p.is_best_seller === true);
+      return displayedProducts.filter((p) => p.is_best_seller === true);
     } else {
-      return filtered.filter((p) => p.category === catName);
+      return displayedProducts.filter((p) => p.category === catName);
     }
   };
 
@@ -300,61 +340,68 @@ export default function AdminInventory() {
               <i className="fa-solid fa-spinner fa-spin mr-2"></i> Loading product inventory...
             </div>
           ) : (
-            activeCategoriesToDisplay.map((category) => {
-              const catProducts = getFilteredProductsByCategory(category.name);
+            <>
+              {activeCategoriesToDisplay.map((category) => {
+                const catProducts = getFilteredProductsByCategory(category.name);
 
-              return (
-                <div key={category.name} className="inventory-section">
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
-                    <span>{category.name}</span>
-                    <span className="text-sm font-normal text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 px-2.5 py-0.5 rounded-full">
-                      {catProducts.length} items
-                    </span>
-                  </h2>
+                return (
+                  <div key={category.name} className="inventory-section">
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
+                      <span>{category.name}</span>
+                      <span className="text-sm font-normal text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 px-2.5 py-0.5 rounded-full">
+                        {catProducts.length} items
+                      </span>
+                    </h2>
 
-                  {catProducts.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                      {catProducts.map((product) => (
-                        <div
-                          key={product.id}
-                          className="bg-white dark:bg-gray-900 rounded-[2rem] p-4 shadow-sm hover:shadow-md transition duration-300 relative group product-card border border-transparent dark:border-gray-800"
-                        >
-                          <div className="absolute bottom-4 right-4 flex gap-2 z-10 opacity-0 group-hover:opacity-100 transition duration-200">
-                            <button
-                              onClick={() => handleOpenEdit(product)}
-                              className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-blue-100 dark:hover:bg-blue-900/50 hover:text-blue-600 dark:hover:text-blue-400 transition text-gray-600 dark:text-gray-300 shadow-sm"
-                            >
-                              <i className="fa-solid fa-pen"></i>
-                            </button>
-                            <button
-                              onClick={() => handleDeleteProduct(product.id)}
-                              className="w-10 h-10 rounded-full bg-red-50 dark:bg-red-950/30 flex items-center justify-center hover:bg-red-100 dark:hover:bg-red-900/50 hover:text-red-650 transition text-red-500 shadow-sm"
-                            >
-                              <i className="fa-solid fa-trash"></i>
-                            </button>
+                    {catProducts.length > 0 ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {catProducts.map((product) => (
+                          <div
+                            key={product.id}
+                            className="bg-white dark:bg-gray-900 rounded-[2rem] p-4 shadow-sm hover:shadow-md transition duration-300 relative group product-card border border-transparent dark:border-gray-800"
+                          >
+                            <div className="absolute bottom-4 right-4 flex gap-2 z-10 opacity-0 group-hover:opacity-100 transition duration-200">
+                              <button
+                                onClick={() => handleOpenEdit(product)}
+                                className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-blue-100 dark:hover:bg-blue-900/50 hover:text-blue-600 dark:hover:text-blue-400 transition text-gray-600 dark:text-gray-300 shadow-sm"
+                              >
+                                <i className="fa-solid fa-pen"></i>
+                              </button>
+                              <button
+                                onClick={() => handleDeleteProduct(product.id)}
+                                className="w-10 h-10 rounded-full bg-red-50 dark:bg-red-950/30 flex items-center justify-center hover:bg-red-100 dark:hover:bg-red-900/50 hover:text-red-650 transition text-red-500 shadow-sm"
+                              >
+                                <i className="fa-solid fa-trash"></i>
+                              </button>
+                            </div>
+
+                            <div className="relative h-48 w-full rounded-2xl overflow-hidden mb-4 bg-gray-100 dark:bg-gray-850">
+                              <img
+                                src={product.image_url || "https://via.placeholder.com/150?text=No+Img"}
+                                className="w-full h-full object-cover"
+                                alt={product.name}
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = "https://via.placeholder.com/150?text=No+Img";
+                                }}
+                              />
+                            </div>
+                            <h3 className="font-bold text-gray-900 dark:text-white product-name">{product.name}</h3>
+                            <p className="text-gray-500 dark:text-gray-400 text-sm">${product.price}</p>
                           </div>
-
-                          <div className="relative h-48 w-full rounded-2xl overflow-hidden mb-4 bg-gray-100 dark:bg-gray-850">
-                            <img
-                              src={product.image_url || "https://via.placeholder.com/150?text=No+Img"}
-                              className="w-full h-full object-cover"
-                              alt={product.name}
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = "https://via.placeholder.com/150?text=No+Img";
-                              }}
-                            />
-                          </div>
-                          <h3 className="font-bold text-gray-900 dark:text-white product-name">{product.name}</h3>
-                          <p className="text-gray-500 dark:text-gray-400 text-sm">${product.price}</p>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-gray-400 dark:text-gray-500 italic pl-2">No items.</p>
-                  )}
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-400 dark:text-gray-500 italic pl-2">No items.</p>
+                    )}
+                  </div>
+                );
+              })}
+              {visibleLimit < filteredProducts.length && (
+                <div ref={observerTarget} className="h-20 flex items-center justify-center mt-6">
+                  <i className="fa-solid fa-spinner fa-spin text-3xl text-orange-500 animate-pulse"></i>
                 </div>
-              );
-            })
+              )}
+            </>
           )}
         </div>
       </div>
