@@ -14,6 +14,8 @@ export default function ScrollToTop() {
     const handleScroll = () => {
       // Scroll the main window to the top
       window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
 
       // Reset scroll position for any div containers with overflow scroll/auto
       const scrollContainers = document.querySelectorAll(".overflow-y-auto, .overflow-y-scroll");
