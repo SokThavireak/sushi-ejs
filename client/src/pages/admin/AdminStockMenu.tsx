@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useHeader } from "../../context/HeaderContext";
@@ -19,6 +19,41 @@ export default function AdminStockMenu() {
   const [stocks, setStocks] = useState<StockItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+
+  const observerTarget = useRef<HTMLDivElement>(null);
+  const [visibleLimit, setVisibleLimit] = useState<number>(10);
+
+  useEffect(() => {
+    setVisibleLimit(10);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisibleLimit((prev) => prev + 10);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentTarget = observerTarget.current;
+    if (currentTarget) {
+      observer.observe(currentTarget);
+    }
+
+    return () => {
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
+      }
+    };
+  }, [stocks, searchTerm]);
+
+  const filteredStocks = stocks.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const displayedStocks = filteredStocks.slice(0, visibleLimit);
 
   // Modals state
   const [addModalOpen, setAddModalOpen] = useState(false);
@@ -220,10 +255,10 @@ export default function AdminStockMenu() {
             </div>
           ) : (
             categories.map((catName) => {
-              const items = stocks.filter(
-                (item) =>
-                  item.category === catName && item.name.toLowerCase().includes(searchTerm.toLowerCase())
-              );
+              const totalItems = filteredStocks.filter((item) => item.category === catName);
+              const items = displayedStocks.filter((item) => item.category === catName);
+
+              if (items.length === 0) return null;
 
               return (
                 <div key={catName} className="group-section">
@@ -231,7 +266,7 @@ export default function AdminStockMenu() {
                     {getCategoryIcon(catName)}
                     <span>{catName}</span>
                     <span className="text-xs font-normal text-gray-400 dark:text-gray-500 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 px-2 py-0.5 rounded-full ml-2">
-                      {items.length}
+                      {totalItems.length}
                     </span>
                   </h2>
 
@@ -299,6 +334,11 @@ export default function AdminStockMenu() {
                 </div>
               );
             })
+          )}
+          {visibleLimit < filteredStocks.length && (
+            <div ref={observerTarget} className="h-20 flex items-center justify-center mt-6">
+              <i className="fa-solid fa-spinner fa-spin text-3xl text-orange-500 animate-pulse"></i>
+            </div>
           )}
         </div>
       </div>

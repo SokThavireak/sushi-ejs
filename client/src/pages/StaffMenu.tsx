@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
@@ -28,6 +28,35 @@ export const StaffMenu: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [toastMsg, setToastMsg] = useState<string>("");
   const [toastType, setToastType] = useState<"success" | "error">("success");
+
+  const observerTarget = useRef<HTMLDivElement>(null);
+  const [visibleLimit, setVisibleLimit] = useState<number>(10);
+
+  useEffect(() => {
+    setVisibleLimit(10);
+  }, [activeCategory, searchTerm]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisibleLimit((prev) => prev + 10);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentTarget = observerTarget.current;
+    if (currentTarget) {
+      observer.observe(currentTarget);
+    }
+
+    return () => {
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
+      }
+    };
+  }, [products, activeCategory, searchTerm]);
 
   const API_BASE = import.meta.env.VITE_API_URL || "";
 
@@ -59,9 +88,20 @@ export const StaffMenu: React.FC = () => {
     }
   };
 
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+    if (!matchesSearch) return false;
+
+    if (activeCategory !== "All") {
+      if (activeCategory === "Most Sales") {
+        return !!product.is_best_seller;
+      }
+      return product.category === activeCategory;
+    }
+    return true;
+  });
+
+  const displayedProducts = filteredProducts.slice(0, visibleLimit);
 
   const displayCategories = [{ id: 0, name: "All" }, ...categories];
 
@@ -143,8 +183,8 @@ export const StaffMenu: React.FC = () => {
 
             const categoryProducts =
               category.name === "Most Sales"
-                ? filteredProducts.filter((p) => p.is_best_seller)
-                : filteredProducts.filter((p) => p.category === category.name);
+                ? displayedProducts.filter((p) => p.is_best_seller)
+                : displayedProducts.filter((p) => p.category === category.name);
 
             if (categoryProducts.length === 0) return null;
 
@@ -208,6 +248,11 @@ export const StaffMenu: React.FC = () => {
               </section>
             );
           })}
+          {visibleLimit < filteredProducts.length && (
+            <div ref={observerTarget} className="h-20 flex items-center justify-center mt-6">
+              <i className="fa-solid fa-spinner fa-spin text-3xl text-orange-500 animate-pulse"></i>
+            </div>
+          )}
         </div>
       )}
 
