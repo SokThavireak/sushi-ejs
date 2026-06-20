@@ -59,7 +59,13 @@ export const Navbar: React.FC = () => {
           {/* Logo */}
           <div className="text-2xl lg:text-3xl font-extrabold tracking-tight z-50">
             <Link
-              to={isStaff ? "/staff/menu" : "/"}
+              to={
+                user && ["manager", "admin", "store_manager", "staff"].includes(user.role.trim().toLowerCase())
+                  ? "/staff/menu"
+                  : user && user.role.trim().toLowerCase() === "cashier"
+                  ? "/admin/orders"
+                  : "/"
+              }
               className="text-gray-900 dark:text-orange-400"
             >
               Murakami<span className="text-orange-500">.</span>
@@ -67,7 +73,7 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* Desktop Navigation */}
-          {(!user || user.role !== "staff") && (
+          {(!user || !["staff", "cashier"].includes(user.role.trim().toLowerCase())) && (
             <div className="hidden lg:flex items-center gap-1 p-1 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
               <Link
                 to="/"
@@ -144,21 +150,22 @@ export const Navbar: React.FC = () => {
               </Link>
             )}
 
-            {isAuthenticated && isStaff && (
-              <>
-                <Link
-                  to="/staff/menu"
-                  className="hidden lg:flex items-center gap-2 text-sm font-bold text-gray-800 dark:text-orange-400 hover:text-orange-500 dark:hover:text-orange-300"
-                >
-                  <i className="fa-solid fa-utensils"></i> POS Menu
-                </Link>
-                <Link
-                  to="/admin/orders"
-                  className="hidden lg:flex items-center gap-2 text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 bg-emerald-50 dark:bg-emerald-900/30 px-3 py-1.5 rounded-lg transition-colors"
-                >
-                  <i className="fa-solid fa-cash-register"></i> POS Checkout
-                </Link>
-              </>
+            {isAuthenticated && user && ["manager", "admin", "store_manager", "staff"].includes(user.role.trim().toLowerCase()) && (
+              <Link
+                to="/staff/menu"
+                className="hidden lg:flex items-center gap-2 text-sm font-bold text-gray-800 dark:text-orange-400 hover:text-orange-500 dark:hover:text-orange-300"
+              >
+                <i className="fa-solid fa-utensils"></i> POS Menu
+              </Link>
+            )}
+
+            {isAuthenticated && user && ["manager", "admin", "store_manager", "cashier"].includes(user.role.trim().toLowerCase()) && (
+              <Link
+                to="/admin/orders"
+                className="hidden lg:flex items-center gap-2 text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 bg-emerald-50 dark:bg-emerald-900/30 px-3 py-1.5 rounded-lg transition-colors"
+              >
+                <i className="fa-solid fa-cash-register"></i> POS Checkout
+              </Link>
             )}
 
             {/* Profile Dropdown */}
@@ -253,7 +260,7 @@ export const Navbar: React.FC = () => {
       {mobileMenuOpen && (
         <div className="lg:hidden bg-slate-50 dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 absolute w-full left-0 shadow-lg">
           <div className="flex flex-col p-4 space-y-2">
-            {(!user || user.role !== "staff") && (
+            {(!user || !["staff", "cashier"].includes(user.role.trim().toLowerCase())) && (
               <>
                 <Link
                   to="/"

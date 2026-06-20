@@ -6,8 +6,18 @@ import { Mail, Lock, ArrowLeft } from "lucide-react";
 import axios from "axios";
 
 export const Auth: React.FC = () => {
-  const { login, checkAuth } = useAuth();
+  const { login, checkAuth, user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (isAuthenticated && user) {
+      const role = user.role?.trim().toLowerCase();
+      if (role === "staff") navigate("/staff/menu");
+      else if (role === "cashier") navigate("/admin/orders");
+      else if (["admin", "manager", "store_manager"].includes(role || "")) navigate("/admin/dashboard");
+      else navigate("/");
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
@@ -34,6 +44,7 @@ export const Auth: React.FC = () => {
           setTimeout(() => {
             const role = res.role?.trim().toLowerCase();
             if (role === "staff") navigate("/staff/menu");
+            else if (role === "cashier") navigate("/admin/orders");
             else if (["admin", "manager", "store_manager"].includes(role || "")) navigate("/admin/dashboard");
             else navigate("/");
           }, 1000);
