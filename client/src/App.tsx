@@ -54,14 +54,7 @@ function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const { user, loading, isAuthenticated, hasRole } = useAuth();
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-950 text-white">
-        <div className="flex items-center gap-2">
-          <i className="fa-solid fa-spinner fa-spin text-2xl text-orange-500"></i>
-          <span>Verifying authentication...</span>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   if (!isAuthenticated) {
