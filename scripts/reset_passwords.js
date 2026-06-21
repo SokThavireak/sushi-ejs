@@ -1,6 +1,6 @@
 import pool from "../config/db.js";
 
-const newHash = "$2b$10$OsbOTIh9u38u9na5tIZo1eZWzJuo17oUf9lZ5mgntNxV4T9xY6f6S"; // bcrypt hash of "password123"
+const newHash = "$2b$10$SA2DPCyPzH9z2vGxdTfW2Ow53B8ftig8SlJ.Fwq4y4vKCSaRf9EQS"; // bcrypt hash of "1"
 const usersToReset = [
   "account@gmail.com",
   "local1@gmail.com",
