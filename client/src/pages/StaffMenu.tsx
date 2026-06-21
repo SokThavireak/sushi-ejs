@@ -31,6 +31,7 @@ export const StaffMenu: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [tableNumber, setTableNumber] = useState<string>("");
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const [showTicket, setShowTicket] = useState<boolean>(true);
 
   const observerTarget = useRef<HTMLDivElement>(null);
   const [visibleLimit, setVisibleLimit] = useState<number>(10);
@@ -217,14 +218,24 @@ export const StaffMenu: React.FC = () => {
               <p className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold">Murakami Sushi</p>
             </div>
           </div>
-          {user && (
-            <div className="flex items-center gap-2 self-start sm:self-auto">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="text-xs text-gray-300">
-                Operator: <span className="font-bold text-orange-400 bg-orange-500/10 border border-orange-500/20 px-3 py-1 rounded-full">{user.email.split("@")[0]}</span>
-              </span>
-            </div>
-          )}
+          <div className="flex items-center gap-4 self-start sm:self-auto flex-wrap">
+            {user && (
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span className="text-xs text-gray-300">
+                  Operator: <span className="font-bold text-orange-400 bg-orange-500/10 border border-orange-500/20 px-3 py-1 rounded-full">{user.email.split("@")[0]}</span>
+                </span>
+              </div>
+            )}
+            <button
+              onClick={() => setShowTicket(!showTicket)}
+              className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white text-[11px] font-extrabold px-3 py-2 rounded-xl border border-orange-600/30 transition-all shadow-md shadow-orange-500/20"
+              title={showTicket ? "Hide Ticket" : "Show Ticket"}
+            >
+              <i className={`fa-solid ${showTicket ? "fa-eye-slash" : "fa-receipt"} text-xs`}></i>
+              <span>{showTicket ? "Hide Ticket" : `Show Ticket (${cartCount})`}</span>
+            </button>
+          </div>
         </div>
 
         {/* Search and Filters */}
@@ -343,9 +354,27 @@ export const StaffMenu: React.FC = () => {
       </div>
 
       {/* RIGHT COLUMN: Active Ticket / Bill Calculator */}
-      <aside className="w-full lg:w-[380px] border-t lg:border-t-0 lg:border-l border-white/10 bg-[#09090b]/85 backdrop-blur-lg flex flex-col h-[400px] lg:h-full pt-6 lg:pt-28 pb-6 px-6 shrink-0 z-10 shadow-2xl">
+      <aside className={`transition-all duration-300 flex flex-col shrink-0 z-10 shadow-2xl bg-slate-900/90 backdrop-blur-lg overflow-hidden ${
+        showTicket 
+          ? "w-full lg:w-[380px] h-[400px] lg:h-full pt-6 lg:pt-28 pb-6 px-6 border-t lg:border-t-0 lg:border-l border-white/10 opacity-100" 
+          : "w-0 h-0 lg:w-0 lg:h-full opacity-0 pointer-events-none p-0 border-transparent"
+      }`}>
         <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowTicket(false)}
+              className="lg:hidden text-gray-400 hover:text-white mr-1 transition-colors flex items-center justify-center w-6 h-6 rounded-md hover:bg-white/5"
+              title="Hide Ticket"
+            >
+              <i className="fa-solid fa-chevron-down text-sm"></i>
+            </button>
+            <button
+              onClick={() => setShowTicket(false)}
+              className="hidden lg:flex text-gray-400 hover:text-white mr-1 transition-colors items-center justify-center w-6 h-6 rounded-md hover:bg-white/5"
+              title="Hide Ticket"
+            >
+              <i className="fa-solid fa-chevron-right text-sm"></i>
+            </button>
             <h2 className="text-sm font-bold uppercase tracking-wider text-gray-300">Current Ticket</h2>
             <span className="bg-orange-500/15 text-orange-400 text-[10px] px-2.5 py-0.5 rounded-full font-extrabold">
               {cartCount} items
@@ -424,7 +453,7 @@ export const StaffMenu: React.FC = () => {
             <select
               value={tableNumber}
               onChange={(e) => setTableNumber(e.target.value)}
-              className="w-full bg-[#18181b] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-orange-500 font-bold"
+              className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-orange-500 font-bold"
             >
               <option value="">Select Service / Table</option>
               {Array.from({ length: 30 }, (_, i) => i + 1).map((num) => (
