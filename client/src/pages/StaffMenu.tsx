@@ -232,7 +232,7 @@ export const StaffMenu: React.FC = () => {
               className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white text-[11px] font-extrabold px-3 py-2 rounded-xl border border-orange-600/30 transition-all shadow-md shadow-orange-500/20"
               title={showTicket ? "Hide Ticket" : "Show Ticket"}
             >
-              <i className={`fa-solid ${showTicket ? "fa-eye-slash" : "fa-receipt"} text-xs`}></i>
+              <i className={`fa-solid ${showTicket ? "fa-eye-slash" : "fa-cart-shopping"} text-xs`}></i>
               <span>{showTicket ? "Hide Ticket" : `Show Ticket (${cartCount})`}</span>
             </button>
           </div>
@@ -395,7 +395,7 @@ export const StaffMenu: React.FC = () => {
           {items.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-gray-500 text-center gap-3 py-8">
               <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 shadow-inner">
-                <i className="fa-solid fa-receipt text-xl"></i>
+                <i className="fa-solid fa-cart-shopping text-xl"></i>
               </div>
               <div>
                 <p className="font-bold text-xs text-gray-300">No Items Added</p>
