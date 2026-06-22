@@ -63,6 +63,13 @@ export const StaffMenu: React.FC = () => {
     };
   }, [products, activeCategory, searchTerm]);
 
+  useEffect(() => {
+    // Force light theme for Staff POS Menu
+    const root = window.document.documentElement;
+    root.classList.remove("dark");
+    localStorage.setItem("theme", "light");
+  }, []);
+
   const API_BASE = import.meta.env.VITE_API_URL || "";
 
   useEffect(() => {
