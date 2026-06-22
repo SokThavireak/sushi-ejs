@@ -3,6 +3,8 @@ import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+import Swal from "sweetalert2";
+
 interface LocationItem {
   id: number;
   name: string;
@@ -38,7 +40,12 @@ export const Checkout: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedLocation) {
-      alert("Please select a store location");
+      Swal.fire({
+        icon: "warning",
+        title: "Store Location Required",
+        text: "Please select a store location for your pickup order.",
+        confirmButtonColor: "#f97316"
+      });
       return;
     }
     setSubmitting(true);
@@ -56,7 +63,12 @@ export const Checkout: React.FC = () => {
       navigate(`/payment/${res.data.orderId}`);
     } catch (err: any) {
       console.error("Checkout failed:", err);
-      alert(err.response?.data?.error || "Order submission failed");
+      Swal.fire({
+        icon: "error",
+        title: "Order Failed",
+        text: err.response?.data?.error || "Order submission failed",
+        confirmButtonColor: "#f97316"
+      });
       setSubmitting(false);
     }
   };

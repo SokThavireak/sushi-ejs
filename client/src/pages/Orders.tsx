@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { TableSkeleton } from "../components/ui/skeleton";
+import Swal from "sweetalert2";
 
 interface Order {
   id: number;
@@ -35,27 +36,71 @@ export const Orders: React.FC = () => {
   }, []);
 
   const handleRequestCancel = async (orderId: number) => {
-    if (!window.confirm("Are you sure you want to cancel this order?")) return;
-    try {
-      await axios.post(`${API_BASE}/api/orders/request-cancel/${orderId}`);
-      alert("Cancellation request submitted successfully.");
-      fetchOrders();
-    } catch (err: any) {
-      console.error(err);
-      alert(err.response?.data?.error || "Request failed");
-    }
+    Swal.fire({
+      title: "Cancel Order?",
+      text: "Are you sure you want to cancel this order?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, Request Cancel",
+      cancelButtonText: "No"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.post(`${API_BASE}/api/orders/request-cancel/${orderId}`);
+          Swal.fire({
+            icon: "success",
+            title: "Submitted",
+            text: "Cancellation request submitted successfully.",
+            confirmButtonColor: "#f97316"
+          });
+          fetchOrders();
+        } catch (err: any) {
+          console.error(err);
+          Swal.fire({
+            icon: "error",
+            title: "Request Failed",
+            text: err.response?.data?.error || "Request failed",
+            confirmButtonColor: "#f97316"
+          });
+        }
+      }
+    });
   };
 
   const handleRequestRefund = async (orderId: number) => {
-    if (!window.confirm("Request a refund for this order?")) return;
-    try {
-      await axios.post(`${API_BASE}/api/orders/request-refund/${orderId}`);
-      alert("Refund request submitted successfully.");
-      fetchOrders();
-    } catch (err: any) {
-      console.error(err);
-      alert(err.response?.data?.error || "Request failed");
-    }
+    Swal.fire({
+      title: "Request Refund?",
+      text: "Do you want to request a refund for this order?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3b82f6",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, Request Refund",
+      cancelButtonText: "No"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.post(`${API_BASE}/api/orders/request-refund/${orderId}`);
+          Swal.fire({
+            icon: "success",
+            title: "Submitted",
+            text: "Refund request submitted successfully.",
+            confirmButtonColor: "#f97316"
+          });
+          fetchOrders();
+        } catch (err: any) {
+          console.error(err);
+          Swal.fire({
+            icon: "error",
+            title: "Request Failed",
+            text: err.response?.data?.error || "Request failed",
+            confirmButtonColor: "#f97316"
+          });
+        }
+      }
+    });
   };
 
   const getStatusColor = (status: string) => {

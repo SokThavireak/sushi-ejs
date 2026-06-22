@@ -1,10 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export const Footer: React.FC = () => {
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Thank you for subscribing to our newsletter!");
+    Swal.fire({
+      icon: "success",
+      title: "Subscribed!",
+      text: "Thank you for subscribing to our newsletter!",
+      confirmButtonColor: "#f97316"
+    });
   };
 
   return (

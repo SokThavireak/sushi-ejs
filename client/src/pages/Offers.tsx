@@ -4,6 +4,7 @@ import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import { CardSkeleton, OfferBannerSkeleton } from "../components/ui/skeleton";
+import Swal from "sweetalert2";
 
 interface DiscountProduct {
   id: string | number;
@@ -21,7 +22,6 @@ export const Offers: React.FC = () => {
 
   const [products, setProducts] = useState<DiscountProduct[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [copyStatus, setCopyStatus] = useState<string>("");
 
   const API_BASE = import.meta.env.VITE_API_URL || "";
 
@@ -41,47 +41,55 @@ export const Offers: React.FC = () => {
 
   const handleAddToCart = async (productId: string | number) => {
     if (!isAuthenticated) {
-      const loginConfirm = window.confirm("Please login to add items to your cart. Login now?");
-      if (loginConfirm) {
-        navigate("/login");
-      }
+      Swal.fire({
+        title: "Login Required",
+        text: "Please login to add items to your cart. Login now?",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonColor: "#f97316",
+        cancelButtonColor: "#6b7280",
+        confirmButtonText: "Login Now",
+        cancelButtonText: "Cancel"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate("/login");
+        }
+      });
       return;
     }
     const res = await addToCart(productId);
-    if (!res.success) {
-      alert(res.error || "Failed to add item to cart");
+    if (res.success) {
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "success",
+        title: "Item added to cart",
+        showConfirmButton: false,
+        timer: 1500
+      });
     } else {
-      showToastNotification("Added to Cart! 🛒");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: res.error || "Failed to add item to cart"
+      });
     }
-  };
-
-  const showToastNotification = (msg: string) => {
-    setCopyStatus(msg);
-    setTimeout(() => setCopyStatus(""), 3000);
   };
 
   const copyCode = (code: string) => {
     navigator.clipboard.writeText(code);
-    showToastNotification(`Code ${code} Copied!`);
+    Swal.fire({
+      toast: true,
+      position: "top-end",
+      icon: "success",
+      title: `Code ${code} Copied!`,
+      showConfirmButton: false,
+      timer: 1500
+    });
   };
 
   return (
     <div className="max-w-7xl mx-auto px-6 mt-36 font-sans pb-16 min-h-screen">
-      {/* Toast Notification Container */}
-      {copyStatus && (
-        <div className="fixed top-24 right-4 z-[9999] flex flex-col gap-3 pointer-events-none">
-          <div
-            className="bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 border-2 border-white/20"
-            style={{ animation: "slideIn 0.5s forwards" }}
-          >
-            <div className="text-2xl">
-              <i className="fa-solid fa-circle-check"></i>
-            </div>
-            <div className="font-bold">{copyStatus}</div>
-          </div>
-        </div>
-      )}
-
       <section className="mb-6 md:mb-10">
         <div className="text-center mb-10">
           <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">

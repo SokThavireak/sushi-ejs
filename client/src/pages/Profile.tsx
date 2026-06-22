@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 export const Profile: React.FC = () => {
   const { user, logout, checkAuth } = useAuth();
@@ -25,34 +26,68 @@ export const Profile: React.FC = () => {
     try {
       await axios.put(`${API_BASE}/profile/update`, { email, password });
       await checkAuth();
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "success",
+        title: "Profile updated successfully!",
+        showConfirmButton: false,
+        timer: 1500
+      });
       setStatusMsg("Profile updated successfully!");
       setPassword("");
     } catch (err: any) {
       console.error(err);
-      setErrorMsg(err.response?.data?.error || "Failed to update profile.");
+      const errMsg = err.response?.data?.error || "Failed to update profile.";
+      Swal.fire({
+        icon: "error",
+        title: "Update Failed",
+        text: errMsg,
+        confirmButtonColor: "#f97316"
+      });
+      setErrorMsg(errMsg);
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleDeleteAccount = async () => {
-    const confirmDelete = window.confirm(
-      "Are you absolutely sure you want to delete your account? This action cannot be undone."
-    );
-    if (!confirmDelete) return;
-
-    setDeleting(true);
-    try {
-      await axios.delete(`${API_BASE}/profile/delete`);
-      await logout();
-      alert("Your account has been deleted.");
-      navigate("/");
-    } catch (err: any) {
-      console.error(err);
-      alert(err.response?.data?.error || "Account deletion failed");
-    } finally {
-      setDeleting(false);
-    }
+    Swal.fire({
+      title: "Delete Account?",
+      text: "Are you absolutely sure you want to delete your account? This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, Delete Account",
+      cancelButtonText: "Cancel"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setDeleting(true);
+        try {
+          await axios.delete(`${API_BASE}/profile/delete`);
+          await logout();
+          Swal.fire({
+            icon: "success",
+            title: "Deleted",
+            text: "Your account has been deleted.",
+            confirmButtonColor: "#f97316"
+          }).then(() => {
+            navigate("/");
+          });
+        } catch (err: any) {
+          console.error(err);
+          Swal.fire({
+            icon: "error",
+            title: "Delete Failed",
+            text: err.response?.data?.error || "Account deletion failed",
+            confirmButtonColor: "#f97316"
+          });
+        } finally {
+          setDeleting(false);
+        }
+      }
+    });
   };
 
   return (

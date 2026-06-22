@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 export const Payment: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -35,15 +36,31 @@ export const Payment: React.FC = () => {
     try {
       const res = await axios.post(`${API_BASE}/payment/confirm/${id}`);
       if (res.data.success) {
-        alert("Payment Successful! Your order has been paid successfully.");
-        const isStaff = user && ["manager", "admin", "store_manager", "staff", "cashier"].includes(user.role.trim().toLowerCase());
-        navigate(isStaff ? "/admin/orders" : "/orders");
+        Swal.fire({
+          icon: "success",
+          title: "Payment Successful",
+          text: "Your order has been paid successfully.",
+          confirmButtonColor: "#f97316"
+        }).then(() => {
+          const isStaff = user && ["manager", "admin", "store_manager", "staff", "cashier"].includes(user.role.trim().toLowerCase());
+          navigate(isStaff ? "/admin/orders" : "/orders");
+        });
       } else {
-        alert(res.data.error || "Payment failed");
+        Swal.fire({
+          icon: "error",
+          title: "Payment Failed",
+          text: res.data.error || "Payment failed",
+          confirmButtonColor: "#f97316"
+        });
       }
     } catch (err: any) {
       console.error("Payment confirmation failed:", err);
-      alert(err.response?.data?.error || "Connection error during payment");
+      Swal.fire({
+        icon: "error",
+        title: "Connection Error",
+        text: err.response?.data?.error || "Connection error during payment",
+        confirmButtonColor: "#f97316"
+      });
     } finally {
       setPaying(false);
     }

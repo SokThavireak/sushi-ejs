@@ -74,7 +74,7 @@ export const Navbar: React.FC = () => {
 
           {/* Desktop Navigation */}
           {(!user || !["staff", "cashier"].includes(user.role.trim().toLowerCase())) && (
-            <div className="hidden lg:flex items-center gap-1 p-1 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+            <div className="hidden lg:flex items-center gap-1 p-1 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#030712]/90 shadow-sm">
               <Link
                 to="/"
                 className={`expandable-tab flex items-center rounded-xl px-4 py-2 text-sm font-medium transition-colors duration-300 ${
@@ -179,8 +179,8 @@ export const Navbar: React.FC = () => {
                 </button>
 
                 {profileOpen && (
-                  <div className="absolute right-0 mt-3 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50 animate-fade-in-down">
-                    <div className="px-4 py-3 bg-gray-50 dark:bg-gray-700 border-b border-gray-100 dark:border-gray-600">
+                  <div className="absolute right-0 mt-3 w-48 bg-white dark:bg-[#030712]/95 backdrop-blur-md rounded-xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden z-50 animate-fade-in-down">
+                    <div className="px-4 py-3 bg-gray-50/50 dark:bg-gray-800/40 border-b border-gray-100 dark:border-gray-800">
                       <p className="text-xs text-gray-500 dark:text-gray-400">Signed in as</p>
                       <p className="text-sm font-bold text-gray-800 dark:text-orange-400 truncate">
                         {user.email.split("@")[0]}
@@ -258,7 +258,7 @@ export const Navbar: React.FC = () => {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-slate-50 dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 absolute w-full left-0 shadow-lg">
+        <div className="lg:hidden bg-slate-50/95 dark:bg-[#030712]/95 backdrop-blur-md border-t border-gray-100 dark:border-gray-800 absolute w-full left-0 shadow-lg transition-all duration-350">
           <div className="flex flex-col p-4 space-y-2">
             {(!user || !["staff", "cashier"].includes(user.role.trim().toLowerCase())) && (
               <>

@@ -105,11 +105,8 @@ function CardContent({ card }: { card: Card }) {
 
 export default function AnimatedCardStack() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const wrapperRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
-  const [heroStyles, setHeroStyles] = useState({
-    scale: 1,
-    borderRadius: "0px",
-  })
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger)
@@ -137,23 +134,37 @@ export default function AnimatedCardStack() {
         // 2. Cycle cards within first 80% scroll progress (0.0 -> 0.8)
         const cardProgress = Math.min(progress / 0.8, 1)
         const rawIndex = Math.floor(cardProgress * totalCards)
-        const index = Math.max(0, Math.min(rawIndex, totalCards - 1))
-        setActiveIndex(index)
+        const targetIndex = Math.max(0, Math.min(rawIndex, totalCards - 1))
+        
+        setActiveIndex((prev) => {
+          if (prev !== targetIndex) {
+            return targetIndex
+          }
+          return prev
+        })
 
         // 3. Zoom out effect in the final 20% scroll progress (0.8 -> 1.0)
+        // Direct DOM manipulation bypasses React render loops on scroll for 60fps performance
         if (progress > 0.8) {
           const zoomProgress = (progress - 0.8) / 0.2
           const targetScale = 1 - zoomProgress * 0.08 // scale down to 0.92
           const targetRadius = `${zoomProgress * 24}px` // rounded corners up to 24px
-          setHeroStyles({
-            scale: targetScale,
-            borderRadius: targetRadius,
-          })
+          
+          if (wrapperRef.current) {
+            gsap.set(wrapperRef.current, {
+              scale: targetScale,
+              borderRadius: targetRadius
+            })
+            wrapperRef.current.classList.add("hero-zoomed-out")
+          }
         } else {
-          setHeroStyles({
-            scale: 1,
-            borderRadius: "0px",
-          })
+          if (wrapperRef.current) {
+            gsap.set(wrapperRef.current, {
+              scale: 1,
+              borderRadius: "0px"
+            })
+            wrapperRef.current.classList.remove("hero-zoomed-out")
+          }
         }
       }
     })
@@ -196,17 +207,30 @@ export default function AnimatedCardStack() {
       ref={containerRef} 
       className="-mt-16 lg:-mt-20 w-full h-screen overflow-hidden flex items-center justify-center"
     >
+      <style>{`
+        .hero-wrapper-transition {
+          transition: border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                      box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+          will-change: transform, border-radius;
+        }
+        .hero-zoomed-out {
+          border-color: rgba(229, 231, 235, 0.8) !important;
+          box-shadow: 0 40px 100px -15px rgba(0, 0, 0, 0.12), 
+                      0 20px 40px -20px rgba(0, 0, 0, 0.08), 
+                      0 2px 10px rgba(0, 0, 0, 0.02) !important;
+        }
+        .dark .hero-zoomed-out {
+          border-color: rgba(31, 41, 55, 0.8) !important;
+        }
+      `}</style>
+
       {/* Inner Scalable Card Wrapper */}
       <div
-        className={`w-full h-full bg-transparent flex items-center relative overflow-hidden transition-all duration-300 border ${
-          heroStyles.scale < 1 ? "border-gray-200/80 dark:border-gray-800/80" : "border-transparent"
-        }`}
+        ref={wrapperRef}
+        className="w-full h-full bg-transparent flex items-center relative overflow-hidden border border-transparent hero-wrapper-transition"
         style={{
-          transform: `scale(${heroStyles.scale})`,
-          borderRadius: heroStyles.borderRadius,
-          boxShadow: heroStyles.scale < 1 
-            ? "0 40px 100px -15px rgba(0, 0, 0, 0.12), 0 20px 40px -20px rgba(0, 0, 0, 0.08), 0 2px 10px rgba(0, 0, 0, 0.02)" 
-            : "none",
+          transform: "scale(1)",
+          borderRadius: "0px",
         }}
       >
         {/* Background Japanese Elements */}

@@ -5,6 +5,8 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { CategorySkeleton, CardSkeleton } from "../components/ui/skeleton";
 
+import Swal from "sweetalert2";
+
 interface Product {
   id: string | number;
   name: string;
@@ -115,15 +117,38 @@ export const Menu: React.FC = () => {
 
   const handleAddToCart = async (productId: string | number) => {
     if (!isAuthenticated) {
-      const loginConfirm = window.confirm("Please login to add items to your cart. Login now?");
-      if (loginConfirm) {
-        navigate("/login");
-      }
+      Swal.fire({
+        title: "Login Required",
+        text: "Please login to add items to your cart. Login now?",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonColor: "#f97316",
+        cancelButtonColor: "#6b7280",
+        confirmButtonText: "Login Now",
+        cancelButtonText: "Cancel"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate("/login");
+        }
+      });
       return;
     }
     const res = await addToCart(productId);
-    if (!res.success) {
-      alert(res.error || "Failed to add item to cart");
+    if (res.success) {
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "success",
+        title: "Item added to cart",
+        showConfirmButton: false,
+        timer: 1500
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: res.error || "Failed to add item to cart"
+      });
     }
   };
 

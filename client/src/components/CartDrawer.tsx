@@ -3,6 +3,7 @@ import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 export const CartDrawer: React.FC = () => {
   const { items, isOpen, toggleCart, updateQty, deleteCartItem, cartTotal } = useCart();
@@ -19,24 +20,51 @@ export const CartDrawer: React.FC = () => {
 
   const handleCreateStaffOrder = async () => {
     if (!tableNumber) {
-      alert("Please select a Table Number first!");
+      Swal.fire({
+        icon: "warning",
+        title: "Table Required",
+        text: "Please select a Table Number first!",
+        confirmButtonColor: "#f97316"
+      });
       return;
     }
-    const confirmOrder = window.confirm(`Send this order to Table ${tableNumber}?`);
-    if (!confirmOrder) return;
-
-    setSubmitting(true);
-    try {
-      const res = await axios.post(`${API_BASE}/api/orders`, { table_number: tableNumber });
-      alert(res.data.message || "Order placed successfully!");
-      toggleCart();
-      navigate("/admin/orders");
-    } catch (err: any) {
-      console.error(err);
-      alert(err.response?.data?.error || "Order failed");
-    } finally {
-      setSubmitting(false);
-    }
+    
+    Swal.fire({
+      title: "Place Order?",
+      text: `Send this order to Table ${tableNumber}?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#4f46e5",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, Place Order",
+      cancelButtonText: "Cancel"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setSubmitting(true);
+        try {
+          const res = await axios.post(`${API_BASE}/api/orders`, { table_number: tableNumber });
+          Swal.fire({
+            icon: "success",
+            title: "Order Placed",
+            text: res.data.message || "Order placed successfully!",
+            confirmButtonColor: "#f97316"
+          }).then(() => {
+            toggleCart();
+            navigate("/admin/orders");
+          });
+        } catch (err: any) {
+          console.error(err);
+          Swal.fire({
+            icon: "error",
+            title: "Order Failed",
+            text: err.response?.data?.error || "Order failed",
+            confirmButtonColor: "#f97316"
+          });
+        } finally {
+          setSubmitting(false);
+        }
+      }
+    });
   };
 
   return (
@@ -111,9 +139,20 @@ export const CartDrawer: React.FC = () => {
                       </button>
                       <button
                         onClick={() => {
-                          if (window.confirm("Remove this item?")) {
-                            deleteCartItem(item.cart_id);
-                          }
+                          Swal.fire({
+                            title: "Remove Item?",
+                            text: "Are you sure you want to remove this item?",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#dc2626",
+                            cancelButtonColor: "#6b7280",
+                            confirmButtonText: "Remove",
+                            cancelButtonText: "Cancel"
+                          }).then((result) => {
+                            if (result.isConfirmed) {
+                              deleteCartItem(item.cart_id);
+                            }
+                          });
                         }}
                         className="w-6 h-6 flex items-center justify-center text-red-500 hover:text-red-700 font-bold transition ml-2"
                       >
