@@ -51,7 +51,7 @@ function AdminLayoutContent() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [theme, setTheme] = useState<string>(localStorage.getItem("theme") || "light");
+  const [theme, setTheme] = useState<string>("light");
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -59,16 +59,12 @@ function AdminLayoutContent() {
 
   useEffect(() => {
     const root = window.document.documentElement;
-    if (theme === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
-    localStorage.setItem("theme", theme);
-  }, [theme]);
+    root.classList.remove("dark");
+    localStorage.setItem("theme", "light");
+  }, []);
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+    // Theme is forced to light globally
   };
 
   const handleLogout = async () => {
@@ -295,13 +291,7 @@ function AdminLayoutContent() {
                   <Bell className="w-4 h-4" />
                 </button>
                 
-                {/* Theme Toggle */}
-                <button
-                  onClick={toggleTheme}
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-zinc-900 transition-colors"
-                >
-                  {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                </button>
+                {/* Theme Toggle removed - Forced light theme */}
 
                 {/* User Avatar */}
                 <div className="h-6 w-px bg-gray-200 dark:bg-zinc-800 mx-1"></div>

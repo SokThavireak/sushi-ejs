@@ -9,22 +9,18 @@ export const Navbar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [theme, setTheme] = useState<string>(localStorage.getItem("theme") || "light");
+  const [theme, setTheme] = useState<string>("light");
   const [profileOpen, setProfileOpen] = useState<boolean>(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
   const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Sync theme class
+    // Sync theme class - Force light theme globally
     const root = window.document.documentElement;
-    if (theme === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
-    localStorage.setItem("theme", theme);
-  }, [theme]);
+    root.classList.remove("dark");
+    localStorage.setItem("theme", "light");
+  }, []);
 
   useEffect(() => {
     // Handle click outside to close profile dropdown
@@ -220,15 +216,7 @@ export const Navbar: React.FC = () => {
               </Link>
             )}
 
-            {/* Dark Mode Toggle */}
-            <button
-              onClick={toggleTheme}
-              className="w-10 h-10 flex items-center justify-center text-gray-700 dark:text-orange-400 hover:text-orange-500 dark:hover:text-orange-300 transition focus:outline-none"
-            >
-              <i
-                className={`fa-solid ${theme === "dark" ? "fa-sun" : "fa-moon"} text-xl`}
-              ></i>
-            </button>
+            {/* Dark Mode Toggle removed - Forced light theme */}
 
             {/* Shopping Cart Drawer Trigger */}
             <button
