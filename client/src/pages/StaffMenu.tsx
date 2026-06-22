@@ -315,7 +315,7 @@ export const StaffMenu: React.FC = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search dishes by code, name..."
-              className="w-full pl-12 lg:pl-14 pr-8 py-3 lg:py-4 rounded-full border-0 bg-white dark:bg-gray-800 shadow-lg text-sm lg:text-base text-gray-700 dark:text-white focus:ring-4 focus:ring-orange-100 dark:focus:ring-orange-900/45 focus:outline-none transition-all font-medium"
+              className="w-full pl-12 lg:pl-14 pr-8 py-3 lg:py-4 rounded-full border-0 bg-white dark:bg-gray-800 shadow-lg text-base text-gray-700 dark:text-white focus:ring-4 focus:ring-orange-100 dark:focus:ring-orange-900/45 focus:outline-none transition-all font-medium"
             />
           </div>
 
@@ -537,7 +537,7 @@ export const StaffMenu: React.FC = () => {
             <select
               value={tableNumber}
               onChange={(e) => setTableNumber(e.target.value)}
-              className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl px-3.5 py-3 text-xs text-gray-850 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 font-bold shadow-sm transition-all"
+              className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl px-3.5 py-3 text-base text-gray-850 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 font-bold shadow-sm transition-all"
             >
               <option value="">Select Service / Table</option>
               {Array.from({ length: 30 }, (_, i) => i + 1).map((num) => (

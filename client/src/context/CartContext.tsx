@@ -35,7 +35,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [items, setItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [showStaffTicket, setShowStaffTicket] = useState<boolean>(true);
+  const [showStaffTicket, setShowStaffTicket] = useState<boolean>(false);
 
   const toggleStaffTicket = () => {
     setShowStaffTicket(!showStaffTicket);
