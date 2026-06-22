@@ -298,14 +298,6 @@ export const StaffMenu: React.FC = () => {
                     <span>Dashboard</span>
                   </button>
                 )}
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 bg-red-600 hover:bg-red-700 active:scale-95 text-white text-[11px] font-extrabold px-3 py-2 rounded-xl border border-red-700/30 transition-all shadow-md shadow-red-500/20 cursor-pointer"
-                  title="Sign Out"
-                >
-                  <i className="fa-solid fa-right-from-bracket text-xs"></i>
-                  <span>Sign Out</span>
-                </button>
               </>
             )}
             <button

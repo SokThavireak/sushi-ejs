@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import Swal from "sweetalert2";
+import axios from "axios";
 
 export const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -38,9 +40,63 @@ export const Navbar: React.FC = () => {
   };
 
   const handleLogout = async () => {
-    await logout();
-    setProfileOpen(false);
-    navigate("/login");
+    if (user && ["manager", "admin", "store_manager", "staff", "cashier"].includes(user.role.trim().toLowerCase())) {
+      const isDark = document.documentElement.classList.contains("dark");
+      const { value: password } = await Swal.fire({
+        title: "Confirm Password",
+        text: "Please enter your password to sign out of the staff account:",
+        input: "password",
+        inputPlaceholder: "Enter your password",
+        inputAttributes: {
+          autocapitalize: "off",
+          autocorrect: "off"
+        },
+        showCancelButton: true,
+        confirmButtonText: "Sign Out",
+        confirmButtonColor: "#ef4444",
+        cancelButtonColor: "#6b7280",
+        background: isDark ? "#1f2937" : "#ffffff",
+        color: isDark ? "#ffffff" : "#1f2937"
+      });
+
+      if (password === undefined) return; // User cancelled
+
+      if (!password) {
+        Swal.fire({
+          icon: "error",
+          title: "Password Required",
+          text: "You must enter a password to sign out.",
+          confirmButtonColor: "#ef4444",
+          background: isDark ? "#1f2937" : "#ffffff",
+          color: isDark ? "#ffffff" : "#1f2937"
+        });
+        return;
+      }
+
+      const API_BASE = import.meta.env.VITE_API_URL || "";
+      try {
+        const res = await axios.post(`${API_BASE}/api/auth/verify-password`, { password });
+        if (res.data.success) {
+          await logout();
+          setProfileOpen(false);
+          navigate("/login");
+        }
+      } catch (err: any) {
+        console.error(err);
+        Swal.fire({
+          icon: "error",
+          title: "Sign Out Failed",
+          text: err.response?.data?.error || "Incorrect password. Please try again.",
+          confirmButtonColor: "#ef4444",
+          background: isDark ? "#1f2937" : "#ffffff",
+          color: isDark ? "#ffffff" : "#1f2937"
+        });
+      }
+    } else {
+      await logout();
+      setProfileOpen(false);
+      navigate("/login");
+    }
   };
 
   const isStaff = user && ["manager", "admin", "store_manager", "staff", "cashier"].includes(user.role.trim().toLowerCase());
