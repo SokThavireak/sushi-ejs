@@ -42,12 +42,8 @@ export const Auth: React.FC = () => {
         const res = await login(email, password);
         if (res.success) {
           setSuccessMsg("Login Successful!");
-          setTimeout(() => {
-            const role = res.role?.trim().toLowerCase();
-            if (role === "staff") navigate("/staff/menu");
-            else if (role === "cashier") navigate("/admin/orders");
-            else if (["admin", "manager", "store_manager"].includes(role || "")) navigate("/admin/dashboard");
-            else navigate("/");
+          setTimeout(async () => {
+            await checkAuth();
           }, 1500);
         } else {
           setErrorMsg(res.error || "Login failed. Please check your credentials.");
@@ -59,9 +55,8 @@ export const Auth: React.FC = () => {
           password,
         });
         setSuccessMsg(res.data.message || "Registration Successful!");
-        await checkAuth();
-        setTimeout(() => {
-          navigate("/");
+        setTimeout(async () => {
+          await checkAuth();
         }, 1500);
       }
     } catch (err: any) {
