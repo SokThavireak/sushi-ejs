@@ -130,7 +130,7 @@ export const Auth: React.FC = () => {
 
       {/* Auth Container */}
       <div
-        className={`bg-white/95 backdrop-blur-sm rounded-[32px] shadow-2xl border border-gray-100 relative z-20 w-[780px] max-w-full min-h-[500px] overflow-hidden transition-all duration-700 ease-in-out ${
+        className={`bg-white/95 backdrop-blur-sm rounded-[32px] shadow-2xl border border-gray-100 relative z-20 w-[780px] max-w-full min-h-[580px] overflow-hidden transition-all duration-700 ease-in-out ${
           isSignUp ? "right-panel-active" : ""
         }`}
         id="container"
@@ -145,7 +145,7 @@ export const Auth: React.FC = () => {
         >
           <form
             onSubmit={(e) => handleAuth(e, "/register")}
-            className="bg-transparent flex flex-col items-center justify-center h-full px-8 md:px-12 text-center"
+            className="bg-transparent flex flex-col items-center justify-center h-full px-8 md:px-12 py-10 text-center"
           >
             <h1 className="font-bold text-3xl mb-1 text-gray-800 tracking-tight">Create Account</h1>
             <p className="text-sm text-gray-500 mb-6">Join us to start ordering delicious sushi!</p>
@@ -231,7 +231,7 @@ export const Auth: React.FC = () => {
         >
           <form
             onSubmit={(e) => handleAuth(e, "/login")}
-            className="bg-transparent flex flex-col items-center justify-center h-full px-8 md:px-12 text-center"
+            className="bg-transparent flex flex-col items-center justify-center h-full px-8 md:px-12 py-10 text-center"
           >
             <h1 className="font-bold text-3xl mb-1 text-gray-800 tracking-tight">Welcome Back</h1>
             <p className="text-sm text-gray-500 mb-6">We're so excited to see you again!</p>
