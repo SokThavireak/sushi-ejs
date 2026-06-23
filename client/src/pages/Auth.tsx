@@ -83,12 +83,12 @@ export const Auth: React.FC = () => {
   };
 
   return (
-    <div className="relative flex justify-center items-center flex-col font-sans h-screen w-screen px-4 overflow-hidden bg-gray-50">
+    <div className="relative flex justify-center items-center flex-col font-sans min-h-screen w-screen py-8 px-4 overflow-y-auto bg-gray-50">
       {/* Underlying Japanese Scenic Background Image */}
       <img
         src="https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=1600&q=80"
         alt="Japanese scenic view background"
-        className="absolute inset-0 w-full h-full object-cover z-0 select-none pointer-events-none"
+        className="fixed inset-0 w-full h-full object-cover z-0 select-none pointer-events-none"
       />
 
       {/* InkReveal scratch-off canvas overlay (White overlay) */}
@@ -137,10 +137,10 @@ export const Auth: React.FC = () => {
       >
         {/* Sign Up Panel */}
         <div
-          className={`absolute top-0 h-full transition-all duration-700 ease-in-out left-0 w-full md:w-1/2 ${
+          className={`absolute signup-panel-wrapper top-0 h-full transition-all duration-700 ease-in-out left-0 w-full md:w-1/2 ${
             isSignUp
-              ? "opacity-100 z-5 translate-x-0 md:translate-x-full"
-              : "opacity-0 z-1 pointer-events-none md:translate-x-0"
+              ? "opacity-100 z-5 translate-x-0 md:translate-x-full block"
+              : "opacity-0 z-1 pointer-events-none md:translate-x-0 hidden md:block"
           }`}
         >
           <form
@@ -223,10 +223,10 @@ export const Auth: React.FC = () => {
 
         {/* Sign In Panel */}
         <div
-          className={`absolute top-0 h-full transition-all duration-700 ease-in-out left-0 w-full md:w-1/2 ${
+          className={`absolute signin-panel-wrapper top-0 h-full transition-all duration-700 ease-in-out left-0 w-full md:w-1/2 ${
             isSignUp
-              ? "opacity-0 z-1 pointer-events-none md:translate-x-full"
-              : "opacity-100 z-5 translate-x-0"
+              ? "opacity-0 z-1 pointer-events-none md:translate-x-full hidden md:block"
+              : "opacity-100 z-5 translate-x-0 block"
           }`}
         >
           <form
@@ -378,6 +378,26 @@ export const Auth: React.FC = () => {
         @keyframes slideInRight {
           from { transform: translateX(100%); opacity: 0; }
           to { transform: translateX(0); opacity: 1; }
+        }
+        @media (max-width: 768px) {
+          #container {
+            min-height: auto !important;
+            height: auto !important;
+            padding: 24px 0 !important;
+            overflow: visible !important;
+          }
+          .signup-panel-wrapper, .signin-panel-wrapper {
+            position: relative !important;
+            width: 100% !important;
+            height: auto !important;
+            transform: none !important;
+            transition: opacity 0.3s ease-in-out !important;
+          }
+          .signup-panel-wrapper form, .signin-panel-wrapper form {
+            height: auto !important;
+            padding-top: 16px !important;
+            padding-bottom: 16px !important;
+          }
         }
       `}</style>
     </div>
